@@ -5,6 +5,7 @@ import FileManager.Local;
 import Pair.Pair;
 import Reflection.ObjectEditor.EditWatchdog;
 import com.openwebserver.core.Connection.Connection;
+import com.openwebserver.core.Connection.ConnectionManager;
 import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Domain;
 import com.openwebserver.core.Handlers.RequestHandler;
@@ -101,6 +102,15 @@ public class Request extends Route{
     public RequestHandler getHandler() {
         return handler;
     }
+
+    //region request access
+
+    public <T> T access(ConnectionManager.Access access) throws IOException, ConnectionManager.ConnectionManagerException {
+        return (T) ConnectionManager.Access(connectionRef, access.getReturnType());
+    }
+
+
+    //endregion
 
     //region request decoding
 
