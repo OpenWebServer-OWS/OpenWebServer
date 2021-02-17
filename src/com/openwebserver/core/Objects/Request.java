@@ -90,6 +90,10 @@ public class Request extends Route{
         return (T) POST.get(key);
     }
 
+    public Object POST(String key){
+        return POST.get(key);
+    }
+
     public void setHandler(RequestHandler requestHandler) {
         this.handler = requestHandler;
     }
