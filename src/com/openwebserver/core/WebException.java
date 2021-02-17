@@ -94,7 +94,9 @@ public class WebException extends Throwable {
         exception.put("message", this.getMessage());
         exception.put("code", getCode().getCode());
         exception.put("short", getCode().getDescription());
-        exception.put("service", getService().getName());
+        if(service != null){
+            exception.put("service", getService().getName());
+        }
         if(detailed) {
             exception.put("class", this.getClass().getSimpleName());
             exception.put("localized-message", this.getLocalizedMessage());
