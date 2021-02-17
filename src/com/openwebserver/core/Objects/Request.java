@@ -78,6 +78,26 @@ public class Request extends Route{
         return GET;
     }
 
+    public String GET(String key) {
+        return GET.get(key);
+    }
+
+    public HashMap<String, Object> POST(){
+        return POST;
+    }
+
+    public <T> T POST(String key, Class<T> type){
+        return (T) POST.get(key);
+    }
+
+    public void setHandler(RequestHandler requestHandler) {
+        this.handler = requestHandler;
+    }
+
+    public RequestHandler getHandler() {
+        return handler;
+    }
+
     //region request decoding
 
     private void decode(byte[] data) throws RequestException.DecodingException {
@@ -150,17 +170,7 @@ public class Request extends Route{
 
     }
 
-    public HashMap<String, Object> POST(){
-        return POST;
-    }
 
-    public void setHandler(RequestHandler requestHandler) {
-        this.handler = requestHandler;
-    }
-
-    public RequestHandler getHandler() {
-        return handler;
-    }
 
     private static class FormData {
 
