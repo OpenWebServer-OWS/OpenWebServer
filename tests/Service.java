@@ -9,7 +9,7 @@ public class Service extends com.openwebserver.services.Objects.Service {
         super(path);
     }
 
-    @Route(path = "/", method = Method.POST)
+    @Route(path = "/", method = Method.POST, require = {""})
     public Response post(Request request) {
         return Response.simple(request.POST());
     }
