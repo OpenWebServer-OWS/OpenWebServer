@@ -32,9 +32,9 @@ public class Request extends Route{
 
 
     protected HashMap<String, Object> POST = new HashMap<>();
-    protected HashMap<String, String> GET = new HashMap<>();
+    protected HashMap<String, String> GET;
     protected HashMap<String, Pair<String, Local>> FILES = new HashMap<>();
-    protected HashMap<String, Object> SESSION;
+    public HashMap<String, Object> SESSION;
     public Session session;
 
     public final Headers headers;
@@ -92,6 +92,14 @@ public class Request extends Route{
     }
 
     public Object POST(String key){
+        return POST.get(key);
+    }
+
+    public <T> T SESSION(String key, Class<T> type){
+        return (T) POST.get(key);
+    }
+
+    public Object SESSION(String key){
         return POST.get(key);
     }
 

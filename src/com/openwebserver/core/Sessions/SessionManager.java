@@ -44,6 +44,7 @@ public class SessionManager{
                     Session s = get(header.get(Session.name).getValue());
                     request.getHandler().getSessionHandler().apply(annotation, s);
                     request.session = s;
+                    request.SESSION = s.store;
                     return;
                 } catch (Session.SessionException.SessionNotFoundException e) {
                     exception[0] = e;
