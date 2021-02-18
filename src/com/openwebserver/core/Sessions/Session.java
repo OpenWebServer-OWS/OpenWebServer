@@ -22,11 +22,17 @@ public class Session extends Cookie {
         super(name,id);
         this.id = id;
         setPath(path);
+        SessionManager.register(this);
     }
 
     public Session(){
         this(UUID.randomUUID().toString(), "/");
         SessionManager.register(this);
+    }
+
+    private Session(String id){
+        super(name, id);
+        this.id = id;
     }
 
 
@@ -54,6 +60,10 @@ public class Session extends Cookie {
 
     public Header revoke() {
         return SessionManager.revoke(this.getId());
+    }
+
+    public static Header revoke(String id){
+        return new Session(id).clear();
     }
 
     public boolean hasRequired(String ... required){

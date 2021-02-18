@@ -21,11 +21,13 @@ public class SessionManager{
 
     public static Header revoke(String id){
         try {
-            return manager.sessions.get(id).clear();
+            if(manager.sessions.containsKey(id)) {
+                return manager.sessions.get(id).clear();
+            }
+            return Session.revoke(id);
         }finally {
             manager.sessions.remove(id);
         }
-
     }
 
     public static HashMap<String,Session> getSessions(){

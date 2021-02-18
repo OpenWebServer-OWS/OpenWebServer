@@ -3,7 +3,6 @@ package com.openwebserver.core.Objects;
 import ByteReader.ByteReader;
 import FileManager.Local;
 import Pair.Pair;
-import Reflection.ObjectEditor.EditWatchdog;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Connection.ConnectionManager;
 import com.openwebserver.core.Content.Code;
@@ -23,9 +22,7 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiFunction;
 
 public class Request extends Route{
 
@@ -96,11 +93,11 @@ public class Request extends Route{
     }
 
     public <T> T SESSION(String key, Class<T> type){
-        return (T) POST.get(key);
+        return (T) SESSION.get(key);
     }
 
     public Object SESSION(String key){
-        return POST.get(key);
+        return SESSION.get(key);
     }
 
     public void setHandler(RequestHandler requestHandler) {
