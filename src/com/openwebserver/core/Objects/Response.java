@@ -9,7 +9,6 @@ import com.openwebserver.core.WebException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,12 +51,6 @@ public class Response implements Content {
                 return new Response(code, String.valueOf(o), Content.Type.Application.edit("json"));
             } else if (o instanceof Content) {
                 return new Response(code, o, null);
-            } else if (o instanceof Local) {
-                try {
-                    return new Response(code, ((Local)o).read(), Content.Type.wrap(((Local) o).getFilter().getMIME()));
-                } catch (IOException e) {
-                    return new WebException(e).respond();
-                }
             } else if (o instanceof WebException) {
                 return ((WebException) o).respond();
             } else if (o instanceof Map) {
