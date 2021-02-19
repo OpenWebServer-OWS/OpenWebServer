@@ -52,7 +52,6 @@ public class Request extends Route{
         return headers.get("Host").getValue();
     }
 
-
     public static Request deserialize(Connection connection) throws ByteReader.ByteReaderException.PrematureStreamException, RequestException {
         Request request = new Request(Headers.Incoming(connection));
         request.connectionRef = connection.getConnectionString();
@@ -114,6 +113,18 @@ public class Request extends Route{
         return (T) ConnectionManager.Access(connectionRef, access.getReturnType());
     }
 
+    //endregion
+
+    //region filehandeling
+
+    public boolean isFile(){
+        return getPath(true).contains(".");
+    }
+
+    public String getFileName(){
+        String path = getPath(true);
+        return path.substring(path.lastIndexOf("/"));
+    }
 
     //endregion
 
