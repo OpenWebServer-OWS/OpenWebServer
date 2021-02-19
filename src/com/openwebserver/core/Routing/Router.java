@@ -24,6 +24,7 @@ public class Router {
 
     public static void register(Domain domain, RequestHandler handler){
         router.routes.populate(domain);
+        handler.setDomain(domain);
         handler.routes.forEach(handler1 -> {
             handler1.setDomain(domain);
             router.routes.addOn(domain, handler1);

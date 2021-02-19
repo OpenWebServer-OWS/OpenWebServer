@@ -162,6 +162,9 @@ public class Route {
         this.domain = domain;
     }
 
+    public Domain getDomain() {
+        return domain;
+    }
 
     //region nested routes
 
