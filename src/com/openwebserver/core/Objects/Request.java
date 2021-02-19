@@ -117,6 +117,20 @@ public class Request extends Route{
 
     //endregion
 
+    //endregion
+
+    //region filehandeling
+
+    public boolean isFile(){
+        return getPath(true).contains(".");
+    }
+
+    public String getFileName(){
+        String path = getPath(true);
+        return path.substring(path.lastIndexOf("/"));
+    }
+    //endregion
+
     //region request decoding
 
     private void decode(byte[] data) throws RequestException.DecodingException {
