@@ -119,7 +119,7 @@ public class Request extends Route{
 
     //endregion
 
-    //region filehandeling
+    //region file handling
 
     public boolean isFile(){
         return getPath(true).contains(".");
@@ -127,7 +127,7 @@ public class Request extends Route{
 
     public String getFileName(){
         String path = getPath(true);
-        return path.substring(path.lastIndexOf("/"));
+        return path.substring(path.lastIndexOf("/") +1);
     }
     //endregion
 

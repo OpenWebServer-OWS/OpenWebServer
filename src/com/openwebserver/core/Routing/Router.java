@@ -47,11 +47,19 @@ public class Router {
 
     private static RequestHandler find(Request request) throws RoutingException.NotFoundException {
         AtomicReference<RequestHandler> requestHandler = new AtomicReference<>(null);
-        router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()), handlers -> handlers.forEach(handler -> {
-            if(handler.matches(request)){
-                requestHandler.set(handler);
-            }
-        }));
+        if(!request.isFile()) {
+            router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()), handlers -> handlers.forEach(handler -> {
+                if (handler.matches(request)) {
+                    requestHandler.set(handler);
+                }
+            }));
+        }else{
+            router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()), handlers -> handlers.forEach(handler -> {
+                if(request.getPath(true).contains(handler.getPath(true))){
+                    requestHandler.set(handler);
+                }
+            }));
+        }
         if(requestHandler.get() == null){
             throw new RoutingException.NotFoundException(request);
         }

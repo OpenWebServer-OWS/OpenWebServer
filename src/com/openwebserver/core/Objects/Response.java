@@ -49,11 +49,33 @@ public class Response implements Content {
             } else if (o instanceof Content) {
                 return new Response(code, o, null);
             }  else if (o instanceof Local) {
-                try {
-                    return new Response(code, ((Local)o).read(), Content.Type.wrap(((Local) o).getFilter().getMIME()));
-                } catch (IOException e) {
-                    return new WebException(e).respond();
-                }
+                    Local l = (Local) o;
+                    return new Response(code, new Content() {
+                        @Override
+                        public long length() {
+                            return l.getSize();
+                        }
+
+                        @Override
+                        public Type getType() {
+                            return Type.wrap(l.getFilter().getMIME());
+                        }
+
+                        @Override
+                        public byte[] raw() {
+                            try {
+                                return l.read();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        public Headers getHeaders() {
+                            return null;
+                        }
+                    }, null);
             } else if (o instanceof WebException) {
                 return ((WebException) o).respond();
             } else if (o instanceof Map) {
