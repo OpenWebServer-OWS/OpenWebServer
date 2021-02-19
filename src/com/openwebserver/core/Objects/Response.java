@@ -9,6 +9,7 @@ import com.openwebserver.core.WebException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,16 +42,40 @@ public class Response implements Content {
         this.type = null;
     }
 
-//    public static Response file(Local file) {
-//        return new Response(Code.Ok, Content.file(file), null);
-//    }
-
     public static Response simple(Code code, Object o, Content.Type type) {
         if (o != null) {
             if (o instanceof JSONObject || o instanceof JSONArray) {
                 return new Response(code, String.valueOf(o), Content.Type.Application.edit("json"));
             } else if (o instanceof Content) {
                 return new Response(code, o, null);
+            }  else if (o instanceof Local) {
+                    Local l = (Local) o;
+                    return new Response(code, new Content() {
+                        @Override
+                        public long length() {
+                            return l.getSize();
+                        }
+
+                        @Override
+                        public Type getType() {
+                            return Type.wrap(l.getFilter().getMIME());
+                        }
+
+                        @Override
+                        public byte[] raw() {
+                            try {
+                                return l.read();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        @Override
+                        public Headers getHeaders() {
+                            return null;
+                        }
+                    }, null);
             } else if (o instanceof WebException) {
                 return ((WebException) o).respond();
             } else if (o instanceof Map) {
@@ -82,6 +107,8 @@ public class Response implements Content {
         }
     }
 
+    //region response methods
+
     @Override
     public long length() {
         return raw.length;
@@ -95,8 +122,6 @@ public class Response implements Content {
     public Code getCode() {
         return code;
     }
-
-    //region response methods
 
     @Override
     public byte[] raw() {

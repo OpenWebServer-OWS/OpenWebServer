@@ -16,7 +16,7 @@ public class Service extends com.openwebserver.services.Objects.Service {
 
     @Route(path = "/", method = Method.GET)
     public Response get(Request request) {
-        return Response.simple(request.POST());
+        return Response.simple(request.GET());
     }
 
     @Route(path = "/{id}", method = Method.GET)
