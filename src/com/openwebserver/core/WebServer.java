@@ -1,5 +1,7 @@
 package com.openwebserver.core;
 
+import DevMode.DevConsole;
+import DevMode.Label;
 import FileManager.Folder;
 import Tree.TreeArrayList;
 import com.openwebserver.core.Connection.Connection;
@@ -14,6 +16,8 @@ import java.util.Objects;
 
 public class WebServer{
 
+    public static DevConsole devConsole = new DevConsole(WebServer.class);
+
     private final String name;
     public static Header serverHeader;
     public static Folder tempFolder;
@@ -23,6 +27,7 @@ public class WebServer{
     static {
         try {
             tempFolder = Folder.Temp("OWS-TEMP-");
+            devConsole.Log(Label.INFO, "TEMP DIR LOCATION: " + tempFolder.getPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,6 +38,7 @@ public class WebServer{
     public WebServer(String name) {
         this.name = name;
         serverHeader = new Header("Server", name);
+        devConsole.Log(Label.INFO, "name:" + name);
     }
 
     public WebServer()
@@ -64,6 +70,7 @@ public class WebServer{
         new Thread(() -> {
             ServerSocket ss = null;
             try {
+                devConsole.Log(Label.INFO, "New ServerSocket on port '"+port+"' " + (secure? "with SSL" : "without SSL"));
                 ss = SecurityManager.create(port, secure);
                 do {
                     try {

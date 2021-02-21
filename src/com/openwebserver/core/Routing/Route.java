@@ -111,9 +111,7 @@ public class Route {
 
     public void addPrefix(String prefix) {
         String finalPrefix = prefix.contains("//")?prefix.replaceAll("//", ""): prefix;
-        doIf(!this.path.contains(prefix), o -> {
-            this.path = finalPrefix + getPath();
-        } );
+        doIf(!this.path.contains(prefix), o -> this.path = finalPrefix + getPath());
         doIf(path.contains("//"), o -> path = path.replaceAll("//", "/"));
         doIf(isREST(), o ->{
             RESTParams.clear();

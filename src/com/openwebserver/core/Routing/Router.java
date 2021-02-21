@@ -1,6 +1,9 @@
 package com.openwebserver.core.Routing;
 
 import ByteReader.ByteReader.ByteReaderException.PrematureStreamException;
+import DevMode.Color;
+import DevMode.DevConsole;
+import DevMode.Label;
 import Tree.TreeArrayList;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Content.Code;
@@ -16,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Router {
 
     private static final Router router = new Router();
+    private static DevConsole devConsole = new DevConsole(Router.class);
 
     private final TreeArrayList<Domain, RequestHandler> routes = new TreeArrayList<>();
 
@@ -24,9 +28,12 @@ public class Router {
 
     public static void register(Domain domain, RequestHandler handler){
         router.routes.populate(domain);
+        devConsole.Log(Label.INFO, domain.getAlias() + " Registerd");
+
         handler.setDomain(domain);
         handler.routes.forEach(handler1 -> {
             handler1.setDomain(domain);
+            devConsole.Log(Label.EMPTY.color(Color.BLUE), handler1.getPath(), 1);
             router.routes.addOn(domain, handler1);
         });
     }
@@ -35,6 +42,7 @@ public class Router {
         connection.handle((self, args) ->{
             try {
                 Request request = Request.deserialize(connection);
+                devConsole.Log(Label.INFO, "New Request");
                 self.write(Router.find(request).handle(request));
             } catch (PrematureStreamException e) {
                   self.close();
