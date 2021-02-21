@@ -63,14 +63,16 @@ public class WebServer{
     }
 
     public void start(){
-        domains.keySet().forEach(port -> createServerSocket(port,domains.get(port).get(0).isSecure()));
+        domains.keySet().forEach(port -> {
+                devConsole.Log(Label.INFO, "New ServerSocket on port '"+port+"' " + (domains.get(port).get(0).isSecure()? "with SSL" : "without SSL"));
+                createServerSocket(port,domains.get(port).get(0).isSecure());
+        });
     }
 
     private void createServerSocket(int port, boolean secure){
         new Thread(() -> {
             ServerSocket ss = null;
             try {
-                devConsole.Log(Label.INFO, "New ServerSocket on port '"+port+"' " + (secure? "with SSL" : "without SSL"));
                 ss = SecurityManager.create(port, secure);
                 do {
                     try {

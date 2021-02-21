@@ -33,7 +33,7 @@ public class Router {
         handler.setDomain(domain);
         handler.routes.forEach(handler1 -> {
             handler1.setDomain(domain);
-            devConsole.Log(Label.EMPTY.color(Color.BLUE), handler1.getPath(), 1);
+            devConsole.Log(Label.EMPTY.edit("ROUTE", Color.WHITE_BRIGHT), handler1.getPath(), 1);
             router.routes.addOn(domain, handler1);
         });
     }
@@ -42,7 +42,7 @@ public class Router {
         connection.handle((self, args) ->{
             try {
                 Request request = Request.deserialize(connection);
-                devConsole.Log(Label.INFO, "New Request");
+                devConsole.Log(Label.INFO, "New Request for '"+request.getAlias()+"' on '"+request.getPath(true)+"'");
                 self.write(Router.find(request).handle(request));
             } catch (PrematureStreamException e) {
                   self.close();

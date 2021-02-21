@@ -5,6 +5,7 @@ package com.openwebserver.core.Security;
 import com.openwebserver.core.Connection.ConnectionDescription;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
@@ -31,8 +32,9 @@ public class SecurityManager {
         } else {
             try {
                 serverSocket = new ServerSocket(port);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (BindException e) {
+                System.err.println("Can't bind to port '"+port+"'");
+                System.exit(-1);
             }
         }
         registerSocket(serverSocket);

@@ -117,8 +117,6 @@ public class Request extends Route{
 
     //endregion
 
-    //endregion
-
     //region file handling
 
     public boolean isFile(){
