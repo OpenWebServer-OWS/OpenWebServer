@@ -1,8 +1,6 @@
 package com.openwebserver.services.Annotations;
 
 
-import com.openwebserver.core.Objects.Request;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

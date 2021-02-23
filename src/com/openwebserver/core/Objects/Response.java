@@ -46,9 +46,11 @@ public class Response implements Content {
         if (o != null) {
             if (o instanceof JSONObject || o instanceof JSONArray) {
                 return new Response(code, String.valueOf(o), Content.Type.Application.edit("json"));
-            } else if (o instanceof Content) {
+            }
+            else if (o instanceof Content) {
                 return new Response(code, o, null);
-            }  else if (o instanceof Local) {
+            }
+            else if (o instanceof Local) {
                     Local l = (Local) o;
                     return new Response(code, new Content() {
                         @Override
@@ -76,17 +78,23 @@ public class Response implements Content {
                             return null;
                         }
                     }, null);
-            } else if (o instanceof WebException) {
+            }
+            else if (o instanceof WebException) {
                 return ((WebException) o).respond();
-            } else if (o instanceof Map) {
+            }
+            else if (o instanceof Map) {
                 return simple(code, JSONObject.wrap(o), type);
-            } else if (o instanceof Collection) {
+            }
+            else if (o instanceof Collection) {
                 return simple(code, new JSONArray().put(o), type);
-            } else if (o instanceof Throwable) {
+            }
+            else if (o instanceof Throwable) {
                 return new WebException((Throwable) o).respond();
-            } else if (o instanceof String || o instanceof Float || o instanceof Double || o instanceof Integer || o instanceof Character || o instanceof Long) {
+            }
+            else if (o instanceof String || o instanceof Float || o instanceof Double || o instanceof Integer || o instanceof Character || o instanceof Long) {
                 return new Response(code, String.valueOf(o), (type != null) ? type : Content.Type.Text.edit("plain"));
-            } else {
+            }
+            else {
                 return simple(code, JSONObject.wrap(o), type);
             }
         }
@@ -131,6 +139,11 @@ public class Response implements Content {
     @Override
     public Response addHeader(Header... headers) {
         Collections.addAll(getHeaders(), headers);
+        return this;
+    }
+
+    public Response addHeaders(Headers headers){
+        getHeaders().addAll(headers);
         return this;
     }
 

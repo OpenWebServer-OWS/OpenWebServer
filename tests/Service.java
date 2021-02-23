@@ -1,5 +1,6 @@
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
+import com.openwebserver.core.Security.CORS.CORS;
 import com.openwebserver.services.Annotations.Route;
 
 
@@ -9,6 +10,7 @@ public class Service extends com.openwebserver.services.Objects.Service {
         super(path);
     }
 
+    @CORS("all")
     @Route(path = "/", method = Method.POST)
     public Response post(Request request) {
         return Response.simple(request.POST());

@@ -2,23 +2,18 @@ package com.openwebserver.core.Routing;
 
 
 import com.openwebserver.core.Domain;
-import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Request;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static Collective.Collective.doIf;
 
 public class Route {
-
-    private Domain domain;
-
 
     public enum Method {
         GET,
@@ -37,23 +32,24 @@ public class Route {
         }
     }
 
-    private Method method = Method.UNDEFINED;
-    private String[] require;
-    private final HashMap<Integer, String> RESTParams = new HashMap<>();
+    private final String[] require;
     private String path;
-    private boolean REST;
+    private final Route.Method method;
+    private final HashMap<Integer, String> RESTParams = new HashMap<>();
+    private Domain domain;
 
-    public Route(String path, Method method, String... require) {
-        if(path != null) {
-            if (!path.startsWith("/") && !path.equals("#")) path = "/" + path;
-            RESTDecoder.PatternReader(path, RESTParams::put);
-        }else{
-            path = "";
-        }
+
+    public Route(String path, Method method, String ... require){
         this.path = path;
         this.method = method;
         this.require = require;
-        REST = !RESTParams.isEmpty();
+        if(path != null) {
+            if (!path.startsWith("/") && !path.equals("#")) path = "/" + path;
+            RESTDecoder.PatternReader(path, RESTParams::put);
+        }
+        else{
+            path = "";
+        }
     }
 
     public Route(com.openwebserver.services.Annotations.Route route){
@@ -62,15 +58,10 @@ public class Route {
 
     public Route(Route route){
         this(route.getPath(), route.getMethod(), route.getRequired());
+        this.domain = route.domain;
     }
 
-    public Route(String path, String... require) {
-        this(path, Method.UNDEFINED, require);
-    }
-
-    protected Route(){}
-
-    public Method getMethod() {
+    protected Method getMethod() {
         return method;
     }
 
@@ -86,27 +77,8 @@ public class Route {
         return path;
     }
 
-    public String getPath(boolean clean) {
-        if (clean && getPath().contains("?")) {
-            return getPath().substring(0, getPath().indexOf("?"));
-        }
-        return getPath();
-    }
-
-    public boolean isREST() {
-        return REST;
-    }
-
-    public boolean matches(Request request) {
-        if (method.allows(request.getMethod())) {
-            if (isREST()) {
-                return RESTDecoder.Match(request.getPath(true), this, request.GET()::put);
-            } else {
-                String cleanPath = request.getPath(true);
-                return getPath().equals(cleanPath) || (cleanPath.endsWith("/") && getPath().equals(cleanPath.substring(0, cleanPath.length() - 1)) );
-            }
-        }
-        return false;
+    public void addPrefix(Route notation){
+        addPrefix(notation.getPath());
     }
 
     public void addPrefix(String prefix) {
@@ -119,6 +91,18 @@ public class Route {
         });
     }
 
+    private boolean isREST() {
+        return !RESTParams.isEmpty();
+    }
+
+    public void setDomain(Domain domain) {
+        this.domain = domain;
+    }
+
+    public Domain getDomain() {
+        return domain;
+    }
+
     public static class RESTDecoder {
 
         public static Pattern pattern = Pattern.compile("\\{(.*?)}", Pattern.MULTILINE);
@@ -127,7 +111,7 @@ public class Route {
             return path.contains("{") && path.contains("}");
         }
 
-        private static boolean Match(String request, Route route, BiConsumer<String, String> paramConsumer) {
+        static boolean Match(String request, Route route, BiConsumer<String, String> paramConsumer) {
             String[] requestPath = request.split("/");
             String[] handlerPath = route.getPath().split("/");
             if (requestPath.length != handlerPath.length) {
@@ -156,43 +140,6 @@ public class Route {
 
     }
 
-    public void setDomain(Domain domain) {
-        this.domain = domain;
-    }
 
-    public Domain getDomain() {
-        return domain;
-    }
-
-    //region nested routes
-
-    public final ArrayList<RequestHandler> routes = new ArrayList<>();
-
-    protected void foreach(Consumer<RequestHandler> handlerConsumer){
-        routes.forEach(handlerConsumer);;
-    }
-
-    protected void add(RequestHandler handler) {
-        routes.add(handler);
-    }
-
-    protected void remove(RequestHandler handler){
-        routes.remove(handler);
-    }
-
-    public void setParent(RequestHandler parent) {
-        ArrayList<RequestHandler> routes = (ArrayList<RequestHandler>) this.routes.clone();
-        this.routes.clear();
-        routes.forEach(handler -> {
-            handler.addPrefix(parent.getPath());
-            add(handler);
-        });
-        this.addPrefix(parent.getPath());
-    }
-
-    public void addAll(ArrayList<RequestHandler> handlers) {
-        handlers.forEach(this::add);
-    }
-    //endregion
 
 }

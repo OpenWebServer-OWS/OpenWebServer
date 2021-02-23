@@ -3,50 +3,43 @@ package com.openwebserver.core.Handlers;
 
 import com.openwebserver.core.Annotations.Session;
 import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Objects.Headers.Header;
+import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
+import com.openwebserver.core.Security.CORS.Policy;
+import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Sessions.SessionManager;
 import com.openwebserver.core.WebException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 
-public class RequestHandler extends Route {
+public class RequestHandler extends Route implements RouteRegister{
 
 
     private ContentHandler contentHandler;
-    private BiFunction<Session, com.openwebserver.core.Sessions.Session, Boolean> sessionHandler = (annotation, session) -> session.hasRequired(annotation.require());
+
+    private SessionHandler sessionHandler = (annotation, session) -> session.hasRequired(annotation.require());
     private Session sessionSpecification;
-    private final ArrayList<Header> headers = new ArrayList<>();
+    private final Headers headers = new Headers();
 
-
-    public RequestHandler(Route r, ContentHandler contentHandler) {
-        this(r,contentHandler,null);
+    public RequestHandler(Route notation, ContentHandler contentHandler) {
+        this(notation,contentHandler,null);
     }
 
-    public RequestHandler(Route r, ContentHandler contentHandler, Session sessionSpecification) {
-        super(r);
+    public RequestHandler(Route notation, ContentHandler contentHandler, Session sessionSpecification) {
+        super(notation);
         this.contentHandler = contentHandler;
         this.sessionSpecification = sessionSpecification;
-        if(contentHandler != null){
-            add(this);
-        }
     }
 
     public void setContentHandler(ContentHandler contentHandler){
-        if(this.contentHandler != null){
-            remove(this);
-        }else{
-            this.contentHandler = contentHandler;
-            add(this);
-        }
+        this.contentHandler = contentHandler;
     }
 
-    public void setSessionHandler(BiFunction<Session, com.openwebserver.core.Sessions.Session, Boolean> handler){
+    //region sessions
+    public void setSessionHandler(SessionHandler handler){
         this.sessionHandler = handler;
     }
 
@@ -54,38 +47,45 @@ public class RequestHandler extends Route {
         this.sessionSpecification = sessionSpecification;
     }
 
-    public  BiFunction<Session, com.openwebserver.core.Sessions.Session, Boolean> getSessionHandler() {
+    public  SessionHandler getSessionHandler() {
         return sessionHandler;
     }
-
-//    public static RequestHandler Folder(Folder folder) {
-//        return new RequestHandler(new Route("#", Route.Method.GET), request -> Response.file(new Local(folder.getPath() + request.getPath(true))));
-//    }
-
-    public static RequestHandler Inline(String path, Response response) {
-        return new RequestHandler(new Route(path), request -> response);
-    }
-
-    public void addHeader(Header ... headers){
-        this.headers.addAll(Arrays.asList(headers));
-        foreach(requestHandler -> {
-            requestHandler.addHeader(headers);
-        });
-    }
+    //endregion
 
     public Response handle(Request request) throws Throwable {
         request.setHandler(this);
         if (!super.hasRequired(request)) {
-            throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", request.getRequired()).addRequest(request);
+            throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
         }
-        if(sessionSpecification != null){
-            try {
-                SessionManager.bind(sessionSpecification, request);
-            }catch (com.openwebserver.core.Sessions.Session.SessionException e){
-                return Response.simple(Code.Unauthorized);
-            }
-        }
-        return contentHandler.respond(request).addHeader(headers.toArray(Header[]::new));
+        SessionManager.bind(sessionSpecification, request);
+        return contentHandler.respond(request).addHeaders(headers);
     }
 
+    //region CORS
+    private Policy policy;
+    private RequestHandler CORS_handler;
+
+    public void setCORSPolicy(String policyName) {
+        if(policyName == null){
+            return;
+        }
+        try {
+            this.policy = PolicyManager.getPolicy(policyName);
+        } catch (PolicyManager.PolicyException.NotFound notFound) {
+            notFound.printStackTrace();
+        }
+        if(policy != null){
+            headers.addAll(policy.get());
+            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(policy.get()));
+        }
+    }
+    //endregion
+
+    @Override
+    public void register(Consumer<RequestHandler> routeConsumer) {
+        routeConsumer.accept(this);
+        if(CORS_handler != null){
+            routeConsumer.accept(CORS_handler);
+        }
+    }
 }

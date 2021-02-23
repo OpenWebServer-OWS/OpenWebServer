@@ -3,6 +3,8 @@ package com.openwebserver.core;
 
 import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Content.Content;
+import com.openwebserver.core.Handlers.RequestHandler;
+import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.services.Objects.Service;
@@ -10,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 public class WebException extends Throwable {
 
@@ -17,6 +20,7 @@ public class WebException extends Throwable {
     private Request request;
     private final JSONObject exception = new JSONObject();
     private Service service;
+    private ArrayList<Header> headers = new ArrayList<>();
 
     public static WebException Wrap(Throwable e){
         WebException exception;
@@ -51,8 +55,16 @@ public class WebException extends Throwable {
         this.code = code;
     }
 
+    @Deprecated
     public WebException setService(Service service){
         this.service = service;
+        return this;
+    }
+
+    public WebException setHandler(RequestHandler handler){
+        if(handler instanceof Service){
+            this.service = service;
+        }
         return this;
     }
 
@@ -60,6 +72,10 @@ public class WebException extends Throwable {
         super(t.getTargetException());
         if(t.getTargetException() instanceof WebException){
             this.code = ((WebException) t.getTargetException()).getCode();
+            this.headers = ((WebException) t.getTargetException()).headers;
+            for (Throwable throwable : t.getTargetException().getSuppressed()) {
+                this.addSuppressed(t);
+            }
         }
 
     }
@@ -119,7 +135,7 @@ public class WebException extends Throwable {
             exception.put("method", request.getMethod());
             exception.put("path", request.getPath());
         }
-        return new Response(code,String.valueOf(exception), Content.Type.Application.edit("json"));
+        return new Response(code,String.valueOf(exception), Content.Type.Application.edit("json")).addHeader(headers.toArray(new Header[0]));
     }
 
     private Service getService() {
