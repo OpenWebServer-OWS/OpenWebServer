@@ -10,25 +10,29 @@ import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.WebException;
 
 import java.net.MalformedURLException;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Router {
 
     private static final Router router = new Router();
 
-    private final TreeArrayList<Domain, RequestHandler> routes = new TreeArrayList<>();
+    private final TreeArrayList<Domain, Routes> routes = new TreeArrayList<>();
 
     private Router(){}
 
 
     public static void register(Domain domain, RequestHandler handler){
-        router.routes.populate(domain);
-        handler.setDomain(domain);
-        handler.routes.forEach(handler1 -> {
-            handler1.setDomain(domain);
-            router.routes.addOn(domain, handler1);
-        });
+        getInstance().routes.populate(domain);
+        Routes routes = null;
+        for (Routes routes1 : getInstance().routes.branch(domain)) {
+            if(routes1.getPath().equals(handler.getPath())){
+                routes1.add(handler);
+                routes = routes1;
+            }
+        }
+        if(routes == null){
+            getInstance().routes.addOn(domain,new Routes(handler.getPath(), domain).add(handler));
+        }
     }
 
     public static void handle(Connection connection){
@@ -41,28 +45,20 @@ public class Router {
             } catch (WebException e) {
                 connection.write(e.respond());
             } catch (Throwable throwable) {
-                throwable.printStackTrace();
+                connection.write(new WebException(throwable).respond(true));
             }
         });
     }
 
-    private static RequestHandler find(Request request) throws RoutingException.NotFoundException {
-        AtomicReference<RequestHandler> requestHandler = new AtomicReference<>(null);
-        if(!request.isFile()) {
-            router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()), handlers -> handlers.forEach(handler -> {
-                if (handler.matches(request)) {
-                    requestHandler.set(handler);
+    private static Routes find(Request request) throws RoutingException.NotFoundException {
+        AtomicReference<Routes> requestHandler = new AtomicReference<>(null);
+        router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()), handlers -> handlers.forEach(routes -> {
+                if(routes.matches(request)){
+                    requestHandler.set(routes);
                 }
             }));
-        }else{
-            router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()), handlers -> handlers.forEach(handler -> {
-                if(request.getPath(true).contains(handler.getPath(true))){
-                    requestHandler.set(handler);
-                }
-            }));
-        }
         if(requestHandler.get() == null){
-            throw new RoutingException.NotFoundException(request);
+            throw new RoutingException.NotFoundException(request.getPath(true));
         }
         return requestHandler.get();
     }
@@ -85,14 +81,7 @@ public class Router {
         getInstance().routes.forEach(((domain, requestHandlers) -> {
             try {
                 System.out.println("DOMAIN:\t" + domain.getUrl().toString());
-                requestHandlers.forEach((route) -> {
-                    try {
-                        System.out.println("\t" + route.getMethod().toString() + ":" +  domain.getUrl().toString()+route.getPath());
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("\t\tREQUIRED:" + Arrays.toString(route.getRequired()));
-                });
+                requestHandlers.forEach(Routes::print);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -115,8 +104,8 @@ public class Router {
 
         public static class NotFoundException extends RoutingException{
 
-            public NotFoundException(Route route) {
-                super(Code.Not_Found,"Can't find route for '"+route.getPath(true)+"'");
+            public NotFoundException(String path) {
+                super(Code.Not_Found,"Can't find route for '"+path+"'");
             }
         }
     }

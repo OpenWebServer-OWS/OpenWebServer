@@ -33,6 +33,7 @@ public interface Content extends ConnectionContent {
         return this;
     }
 
+
     Headers getHeaders();
 
     default void HEAD() {

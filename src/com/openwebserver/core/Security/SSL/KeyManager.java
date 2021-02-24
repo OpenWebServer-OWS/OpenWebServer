@@ -1,4 +1,4 @@
-package com.openwebserver.core.Security;
+package com.openwebserver.core.Security.SSL;
 
 import FileManager.Local;
 import Reflection.ObjectEditor.ObjectEditor;

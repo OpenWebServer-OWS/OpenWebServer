@@ -1,8 +1,10 @@
 package com.openwebserver.core.Sessions;
 
 
+import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Request;
+import com.openwebserver.core.WebException;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -38,13 +40,16 @@ public class SessionManager{
         Session.name = name;
     }
 
-    public static void bind(com.openwebserver.core.Annotations.Session annotation, Request request) throws Session.SessionException {
+    public static void bind(com.openwebserver.core.Annotations.Session annotation, Request request) throws WebException {
+        if(annotation == null){
+            return;
+        }
         final Session.SessionException[] exception = {null};
         boolean hasActive = request.headers.tryGet("Cookie", header -> {
             if(header.contains(Session.name)){
                 try {
                     Session s = get(header.get(Session.name).getValue());
-                    request.getHandler().getSessionHandler().apply(annotation, s);
+                    request.getHandler().getSessionHandler().check(annotation, s);
                     request.session = s;
                     request.SESSION = s.store;
                     return;
@@ -58,7 +63,7 @@ public class SessionManager{
             throw new Session.SessionException.SessionNotFoundException();
         }
         if(exception[0] != null){
-            throw exception[0];
+            throw request.getHandler().getSessionHandler().decline(request, exception[0]);
         }
     }
 

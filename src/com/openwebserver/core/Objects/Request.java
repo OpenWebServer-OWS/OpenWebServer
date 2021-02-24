@@ -11,7 +11,9 @@ import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Routing.Route;
+import com.openwebserver.core.Routing.Routes;
 import com.openwebserver.core.Routing.Router;
+
 import com.openwebserver.core.Sessions.Session;
 import com.openwebserver.core.WebException;
 import com.openwebserver.core.WebServer;
@@ -24,34 +26,34 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
-public class Request extends Route{
-
-
+public class Request{
 
     protected HashMap<String, Object> POST = new HashMap<>();
     protected HashMap<String, String> GET;
     protected HashMap<String, Pair<String, Local>> FILES = new HashMap<>();
+
     public HashMap<String, Object> SESSION;
     public Session session;
 
+
     public final Headers headers;
+    public final String path;
+    public final Route.Method method;
     private Domain domain;
     private String connectionRef;
     private RequestHandler handler;
 
     private Request(Headers headers){
-        super(headers.getPath(),Method.valueOf(headers.getMethod()));
+        this.path = headers.getPath();
+        this.method = Route.Method.valueOf(headers.getMethod());
         this.headers = headers;
         this.domain = Router.getDomain(getAlias());
         this.GET = URLEncoded(headers.getPath());
-
     }
-
 
     public String getAlias() {
         return headers.get("Host").getValue();
     }
-
 
     public static Request deserialize(Connection connection) throws ByteReader.ByteReaderException.PrematureStreamException, RequestException {
         Request request = new Request(Headers.Incoming(connection));
@@ -117,9 +119,20 @@ public class Request extends Route{
 
     //endregion
 
-    //endregion
-
     //region file handling
+
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getPath(boolean clean) {
+        if (clean && getPath().contains("?")) {
+            return getPath().substring(0, getPath().indexOf("?"));
+        }
+        return getPath();
+    }
+
 
     public boolean isFile(){
         return getPath(true).contains(".");
@@ -203,6 +216,9 @@ public class Request extends Route{
 
     }
 
+    public Route.Method getMethod() {
+        return method;
+    }
 
 
     private static class FormData {

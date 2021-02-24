@@ -1,4 +1,4 @@
-package com.openwebserver.core.Security;
+package com.openwebserver.core.Security.SSL;
 
 import ByteReader.ByteReader;
 import FileManager.Local;

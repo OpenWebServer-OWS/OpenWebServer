@@ -3,7 +3,7 @@ package com.openwebserver.core;
 
 import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Routing.Router;
-import com.openwebserver.core.Security.Certificate;
+import com.openwebserver.core.Security.SSL.Certificate;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,7 +43,8 @@ public class Domain {
     }
 
     public Domain addHandler(RequestHandler requestHandler) {
-        Router.register(this, requestHandler);
+        requestHandler.setDomain(this);
+        requestHandler.register(handler -> Router.register(this, handler));
         return this;
     }
 
@@ -63,15 +64,11 @@ public class Domain {
         return secure;
     }
 
-    public Domain setCertificates(Certificate<X509Certificate> certificate, Certificate<PrivateKey> privateKey) {
-        this.certificate = certificate;
-        this.privateKey = privateKey;
-        return this;
-    }
 
     public String getAlias() {
         return this.alias;
     }
+
 
     public Certificate<X509Certificate> getCertificate() {
         return certificate;
@@ -80,6 +77,7 @@ public class Domain {
     public Certificate<PrivateKey> getPrivateKey() {
         return privateKey;
     }
+
 
     @Override
     public String toString() {

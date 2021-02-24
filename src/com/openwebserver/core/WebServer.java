@@ -1,11 +1,12 @@
 package com.openwebserver.core;
 
+
 import FileManager.Folder;
 import Tree.TreeArrayList;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Routing.Router;
-import com.openwebserver.core.Security.KeyManager;
+
 import com.openwebserver.core.Security.SecurityManager;
 
 import java.io.IOException;
@@ -13,6 +14,8 @@ import java.net.ServerSocket;
 import java.util.Objects;
 
 public class WebServer{
+
+
 
     private final String name;
     public static Header serverHeader;
@@ -48,16 +51,13 @@ public class WebServer{
         for (Domain domain : domains) {
             this.domains.addOn(domain.getPort(), domain);
         }
-        try {
-            KeyManager.load(domains);
-        } catch (KeyManager.KeyManagerException e) {
-            e.printStackTrace();
-        }
         return this;
     }
 
     public void start(){
-        domains.keySet().forEach(port -> createServerSocket(port,domains.get(port).get(0).isSecure()));
+        domains.keySet().forEach(port -> {
+                createServerSocket(port,domains.get(port).get(0).isSecure());
+        });
     }
 
     private void createServerSocket(int port, boolean secure){

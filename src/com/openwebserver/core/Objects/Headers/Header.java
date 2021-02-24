@@ -17,6 +17,7 @@ public class Header extends Pair<String, String> implements Serializer<String>, 
 
     private String raw;
 
+    @SafeVarargs
     public Header(String key, String value, Attribute<String>... attributes) {
         super(key, value);
         this.attributes = new ArrayList<>(Arrays.asList(attributes));
