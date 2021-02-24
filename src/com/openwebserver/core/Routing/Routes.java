@@ -52,7 +52,7 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
             return Route.RESTDecoder.Match(request.getPath(true), route , request.GET()::put);
         } else {
             String cleanPath = request.getPath(true);
-            return getPath().equals(cleanPath) || (cleanPath.endsWith("/") && getPath().equals(cleanPath.substring(0, cleanPath.length() - 1)) );
+            return getPath().equals(cleanPath) || (cleanPath.endsWith("/") && getPath().equals(cleanPath.substring(0, cleanPath.length() - 1))) || getPath().equals(cleanPath + "/");
         }
     }
 
