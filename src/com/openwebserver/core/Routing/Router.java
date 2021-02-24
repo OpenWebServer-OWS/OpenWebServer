@@ -45,8 +45,7 @@ public class Router {
             } catch (WebException e) {
                 connection.write(e.respond());
             } catch (Throwable throwable) {
-                throwable.printStackTrace();
-                connection.close();
+                connection.write(new WebException(throwable).respond(true));
             }
         });
     }
@@ -82,9 +81,7 @@ public class Router {
         getInstance().routes.forEach(((domain, requestHandlers) -> {
             try {
                 System.out.println("DOMAIN:\t" + domain.getUrl().toString());
-                requestHandlers.forEach((routes) -> {
-                    routes.print();
-                });
+                requestHandlers.forEach(Routes::print);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

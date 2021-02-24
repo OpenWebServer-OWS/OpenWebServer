@@ -12,7 +12,7 @@ public class Main {
 
         new WebServer().addDomain(
                 new Domain()
-                    .addHandler(new Service("/"))
+                    .addHandler(new Service("/123"))
         ).start();
         Router.print();
     }

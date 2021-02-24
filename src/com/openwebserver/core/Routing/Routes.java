@@ -30,6 +30,12 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
                 e.printStackTrace();
             }
             System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
+            if(handler.getPolicyName() != null) {
+                System.out.println("\t\tPOLICY:" + handler.getPolicy());
+            }
+            if(handler.needsAuthentication()) {
+                System.out.println("\t\tAUTHENTICATION: REQUIRED");
+            }
         });
     }
 

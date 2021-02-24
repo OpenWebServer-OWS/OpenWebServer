@@ -37,6 +37,7 @@ public class Route {
     private final Route.Method method;
     private final HashMap<Integer, String> RESTParams = new HashMap<>();
     private Domain domain;
+    private boolean needsAuthorization = false;
 
 
     public Route(String path, Method method, String ... require){
@@ -47,9 +48,6 @@ public class Route {
             if (!path.startsWith("/") && !path.equals("#")) path = "/" + path;
             RESTDecoder.PatternReader(path, RESTParams::put);
         }
-        else{
-            path = "";
-        }
     }
 
     public Route(com.openwebserver.services.Annotations.Route route){
@@ -59,6 +57,14 @@ public class Route {
     public Route(Route route){
         this(route.getPath(), route.getMethod(), route.getRequired());
         this.domain = route.domain;
+    }
+
+    public boolean needsAuthentication() {
+        return needsAuthorization;
+    }
+
+    public void setNeedsAuthentication(boolean authorized) {
+        this.needsAuthorization = authorized;
     }
 
     protected Method getMethod() {

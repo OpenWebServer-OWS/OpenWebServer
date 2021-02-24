@@ -9,12 +9,14 @@ import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static com.openwebserver.core.Routing.Route.*;
+
 public class Policy implements Supplier<Headers> {
 
     private final String name;
-    private ArrayList<String> allowedOrigins = new ArrayList<>();
-    private ArrayList<String> allowedHeaders = new ArrayList<>();
-    private ArrayList<Route.Method> allowedMethods = new ArrayList<>();
+    private final ArrayList<String> allowedOrigins = new ArrayList<>();
+    private final ArrayList<String> allowedHeaders = new ArrayList<>();
+    private final ArrayList<Method> allowedMethods = new ArrayList<>();
 
     public Policy(String name){
         this.name = name;
@@ -24,8 +26,8 @@ public class Policy implements Supplier<Headers> {
         return name;
     }
 
-    public Policy addOrigin(String ... orgins){
-        allowedOrigins.addAll(Arrays.asList(orgins));
+    public Policy addOrigin(String ... origins){
+        allowedOrigins.addAll(Arrays.asList(origins));
         return this;
     }
 
@@ -38,13 +40,13 @@ public class Policy implements Supplier<Headers> {
         return AllowHeader("*");
     }
 
-    public Policy AllowMethod(Route.Method ... methods){
+    public Policy AllowMethod(Method ... methods){
         allowedMethods.addAll(Arrays.asList(methods));
         return this;
     }
 
     public Policy AllowAnyMethods(){
-        allowedMethods.add(Route.Method.UNDEFINED);
+        allowedMethods.add(Method.UNDEFINED);
         return this;
     }
     public Policy AllowAnyOrgin(){
@@ -57,7 +59,7 @@ public class Policy implements Supplier<Headers> {
         Headers headers = new Headers();
         headers.add(new Header("Access-Control-Allow-Origin", between(allowedOrigins, ",")));
         headers.add(new Header("Access-Control-Allow-Methods", between(allowedMethods, method -> {
-            if(method.equals(Route.Method.UNDEFINED)){
+            if(method.equals(Method.UNDEFINED)){
                 return "*";
             }else{
                 return method.name();
@@ -68,7 +70,7 @@ public class Policy implements Supplier<Headers> {
     }
 
     private static <T> String between(ArrayList<T> collection, String separator){
-        return between(collection, (item) -> item.toString(), separator);
+        return between(collection, Object::toString, separator);
     }
 
     private static <T> String between(ArrayList<T> collection, Function<T, String> editor,String separator){
@@ -82,4 +84,12 @@ public class Policy implements Supplier<Headers> {
         return builder.toString();
     }
 
+    @Override
+    public String toString() {
+        return name+"{" +
+                "allowedOrigins=" + allowedOrigins +
+                ", allowedHeaders=" + allowedHeaders +
+                ", allowedMethods=" + allowedMethods +
+                '}';
+    }
 }

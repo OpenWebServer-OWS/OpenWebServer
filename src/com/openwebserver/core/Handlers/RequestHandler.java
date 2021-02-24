@@ -7,6 +7,7 @@ import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
+import com.openwebserver.core.Security.Authorization.Authentication;
 import com.openwebserver.core.Security.CORS.Policy;
 import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Sessions.SessionManager;
@@ -24,6 +25,7 @@ public class RequestHandler extends Route implements RouteRegister{
     private Session sessionSpecification;
     private final Headers headers = new Headers();
 
+
     public RequestHandler(Route notation, ContentHandler contentHandler) {
         this(notation,contentHandler,null);
     }
@@ -38,6 +40,19 @@ public class RequestHandler extends Route implements RouteRegister{
         this.contentHandler = contentHandler;
     }
 
+    public Response handle(Request request) throws Throwable {
+        request.setHandler(this);
+        if (!super.hasRequired(request)) {
+            throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
+        }
+        if(needsAuthentication() && !getAuthenticationHandler().authorize(request)){
+            throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
+        }
+        SessionManager.bind(sessionSpecification, request);
+        return contentHandler.respond(request).addHeaders(headers);
+    }
+
+
     //region sessions
     public void setSessionHandler(SessionHandler handler){
         this.sessionHandler = handler;
@@ -51,15 +66,6 @@ public class RequestHandler extends Route implements RouteRegister{
         return sessionHandler;
     }
     //endregion
-
-    public Response handle(Request request) throws Throwable {
-        request.setHandler(this);
-        if (!super.hasRequired(request)) {
-            throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
-        }
-        SessionManager.bind(sessionSpecification, request);
-        return contentHandler.respond(request).addHeaders(headers);
-    }
 
     //region CORS
     private Policy policy;
@@ -79,6 +85,30 @@ public class RequestHandler extends Route implements RouteRegister{
             CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(policy.get()));
         }
     }
+
+    public String getPolicyName() {
+        if(getPolicy() != null){
+            return getPolicy().getName();
+        }
+        return null;
+    }
+
+
+    public Policy getPolicy() {
+        return policy;
+    }
+    //endregion
+
+    //region Authentication
+    protected Authentication authentication;
+    public void setAuthenticationHandler(Authentication authentication){
+        if(needsAuthentication()) {
+            this.authentication = authentication;
+        }
+    }
+    protected Authentication getAuthenticationHandler() {
+        return authentication;
+    }
     //endregion
 
     @Override
@@ -88,4 +118,7 @@ public class RequestHandler extends Route implements RouteRegister{
             routeConsumer.accept(CORS_handler);
         }
     }
+
+
+
 }
