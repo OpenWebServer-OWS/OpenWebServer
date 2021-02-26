@@ -6,8 +6,8 @@ import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
-import com.openwebserver.core.Security.Authorization.Authentication;
 import com.openwebserver.core.Security.Authorization.Authorize;
+import com.openwebserver.core.Security.Authorization.Authorizor;
 import com.openwebserver.core.Security.CORS.CORS;
 import com.openwebserver.core.WebException;
 import com.openwebserver.services.ServiceManager;
@@ -58,8 +58,15 @@ public class Service extends RequestHandler {
     @Override
     public void register(Consumer<RequestHandler> routeConsumer) {
         routes.forEach(handler -> {
-            handler.setAuthenticationHandler(getAuthenticationHandler());
             handler.register(routeConsumer);
+        });
+    }
+
+    @Override
+    public void setAuthorizor(Authorizor authorizor) {
+        super.setAuthorizor(authorizor);
+        routes.forEach(handler -> {
+            handler.setAuthorizor(authorizor);
         });
     }
 
@@ -77,11 +84,6 @@ public class Service extends RequestHandler {
     public void addPrefix(String prefix) {
         super.addPrefix(prefix);
         routes.forEach(handler -> handler.addPrefix(prefix));
-    }
-
-    @Override
-    public void setAuthenticationHandler(Authentication authentication) {
-        super.authentication = authentication;
     }
 
     public static <T> T getService(Class<T> serviceClass) throws ServiceManager.ServiceManagerException {

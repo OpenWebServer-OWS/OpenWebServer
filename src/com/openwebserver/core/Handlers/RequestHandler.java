@@ -7,7 +7,7 @@ import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
-import com.openwebserver.core.Security.Authorization.Authentication;
+import com.openwebserver.core.Security.Authorization.Authorizor;
 import com.openwebserver.core.Security.CORS.Policy;
 import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Sessions.SessionManager;
@@ -24,6 +24,7 @@ public class RequestHandler extends Route implements RouteRegister{
     private SessionHandler sessionHandler = (annotation, session) -> session.hasRequired(annotation.require());
     private Session sessionSpecification;
     private final Headers headers = new Headers();
+
 
 
     public RequestHandler(Route notation, ContentHandler contentHandler) {
@@ -45,7 +46,7 @@ public class RequestHandler extends Route implements RouteRegister{
         if (!super.hasRequired(request)) {
             throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
         }
-        if(needsAuthentication() && !getAuthenticationHandler().authorize(request)){
+        if(needsAuthentication() && !getAuthorizor().authorize(request)){
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
         SessionManager.bind(sessionSpecification, request);
@@ -100,14 +101,15 @@ public class RequestHandler extends Route implements RouteRegister{
     //endregion
 
     //region Authentication
-    protected Authentication authentication;
-    public void setAuthenticationHandler(Authentication authentication){
+    private Authorizor authorizor;
+    public void setAuthorizor(Authorizor authorizor){
         if(needsAuthentication()) {
-            this.authentication = authentication;
+            this.authorizor = authorizor;
         }
     }
-    protected Authentication getAuthenticationHandler() {
-        return authentication;
+
+    protected Authorizor getAuthorizor() {
+        return authorizor;
     }
     //endregion
 
