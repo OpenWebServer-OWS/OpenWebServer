@@ -69,6 +69,11 @@ public class Domain {
         return this.alias;
     }
 
+    public Domain setCertificates( Certificate<X509Certificate> certificate, Certificate<PrivateKey> privateKey){
+        this.certificate = certificate;
+        this.privateKey = privateKey;
+        return this;
+    }
 
     public Certificate<X509Certificate> getCertificate() {
         return certificate;
