@@ -19,7 +19,6 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     public Routes(String path, Domain domain){
         route = new Route(path, null);
         route.setDomain(domain);
-
     }
 
     public void print() {
@@ -62,11 +61,21 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     }
 
     public Response handle(Request request) throws Throwable {
+        RequestHandler handler = null;
         if(containsKey(request.getMethod())){
-            return get(request.getMethod()).handle(request);
+            handler = get(request.getMethod());
         }else if(containsKey(Route.Method.UNDEFINED)){
+            handler = get(Route.Method.UNDEFINED);
             return get(Route.Method.UNDEFINED).handle(request);
-        }else{
+        }
+        if(handler != null){
+            try {
+                return handler.handle(request).addHeaders(handler.getHeaders());
+            }catch (WebException e){
+                throw e.addHeaders(handler.getHeaders());
+            }
+        }
+        else{
             throw new WebException(Code.Method_Not_Allowed, "Method not allowed on '"+getPath()+"'").addRequest(request);
         }
     }

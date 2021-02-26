@@ -53,6 +53,17 @@ public class RequestHandler extends Route implements RouteRegister{
         return contentHandler.respond(request).addHeaders(headers);
     }
 
+    public Headers getHeaders() {
+        return headers;
+    }
+
+    @Override
+    public void addPrefix(String prefix) {
+        super.addPrefix(prefix);
+        if(CORS_handler != null){
+            CORS_handler.addPrefix(prefix);
+        }
+    }
 
     //region sessions
     public void setSessionHandler(SessionHandler handler){
