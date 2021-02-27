@@ -50,7 +50,7 @@ public class RequestHandler extends Route implements RouteRegister{
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
         SessionManager.bind(sessionSpecification, request);
-        return contentHandler.respond(request).addHeaders(headers);
+        return contentHandler.respond(request); //RequestHandler specific Headers are moved to Routes class for WebException handlings
     }
 
     public Headers getHeaders() {
@@ -93,8 +93,8 @@ public class RequestHandler extends Route implements RouteRegister{
             notFound.printStackTrace();
         }
         if(policy != null){
-            headers.addAll(policy.get());
-            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(policy.get()));
+            headers.addAll(policy.pack());
+            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(policy.pack()));
         }
     }
 
