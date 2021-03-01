@@ -49,12 +49,17 @@ public class SessionManager{
             if(header.contains(Session.name)){
                 try {
                     Session s = get(header.get(Session.name).getValue());
-                    request.getHandler().getSessionHandler().check(annotation, s);
-                    request.session = s;
-                    request.SESSION = s.store;
-                    return;
+                    if(request.getHandler().getSessionHandler().check(annotation, s)){
+                        request.session = s;
+                        request.SESSION = s.store;
+                        return;
+                    }else {
+                        exception[0] = new Session.SessionException("Invalid parameters");
+                        return;
+                    }
                 } catch (Session.SessionException.SessionNotFoundException e) {
                     exception[0] = e;
+                    return;
                 }
             }
             exception[0] = new Session.SessionException.SessionNotFoundException();

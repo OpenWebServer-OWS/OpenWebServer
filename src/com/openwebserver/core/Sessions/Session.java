@@ -6,10 +6,8 @@ import com.openwebserver.core.Objects.Cookie;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.WebException;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.function.Function;
 
 public class Session extends Cookie {
 
@@ -47,6 +45,18 @@ public class Session extends Cookie {
 
     public Session store(String key, Object o){
         store.put(key,o);
+        return this;
+    }
+
+    public Session storeAll(Map<String, ?> objectMap){
+        store.putAll(objectMap);
+        return this;
+    }
+
+    public <T> Session  storeAll(Function<T, String> indexFunction, T ... objects){
+        for (T object : objects) {
+            store.put(indexFunction.apply(object), object);
+        }
         return this;
     }
 
