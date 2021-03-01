@@ -35,6 +35,8 @@ public class Request{
     public HashMap<String, Object> SESSION;
     public Session session;
 
+    public HashMap<String, Object> AUTH = new HashMap<>();
+
 
     public final Headers headers;
     public final String path;

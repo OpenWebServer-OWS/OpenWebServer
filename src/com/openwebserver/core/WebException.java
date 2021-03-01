@@ -5,6 +5,7 @@ import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Content.Content;
 import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Headers.Header;
+import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.services.Objects.Service;
@@ -12,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
 public class WebException extends Throwable {
 
@@ -20,7 +20,7 @@ public class WebException extends Throwable {
     private Request request;
     private final JSONObject exception = new JSONObject();
     private Service service;
-    private ArrayList<Header> headers = new ArrayList<>();
+    private Headers headers = new Headers();
 
     public static WebException Wrap(Throwable e){
         WebException exception;
@@ -43,6 +43,17 @@ public class WebException extends Throwable {
 
     public WebException(InvocationTargetException t){
         this(Code.Internal_Server_Error, t);
+    }
+
+    public WebException addHeader(Header ... headers){
+        for (Header header : headers) {
+            this.headers.add(header);
+        }
+        return this;
+    }
+    public WebException addHeaders(Headers headers){
+        this.headers.addAll(headers);
+        return this;
     }
 
     public WebException(Code code, String message){

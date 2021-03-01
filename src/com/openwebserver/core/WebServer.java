@@ -7,6 +7,7 @@ import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Routing.Router;
 
+import com.openwebserver.core.Security.SSL.KeyManager;
 import com.openwebserver.core.Security.SecurityManager;
 
 import java.io.IOException;
@@ -48,6 +49,11 @@ public class WebServer{
     }
 
     public WebServer addDomain(Domain ... domains) {
+        try {
+            KeyManager.load(domains);
+        } catch (KeyManager.KeyManagerException e) {
+            e.printStackTrace();
+        }
         for (Domain domain : domains) {
             this.domains.addOn(domain.getPort(), domain);
         }

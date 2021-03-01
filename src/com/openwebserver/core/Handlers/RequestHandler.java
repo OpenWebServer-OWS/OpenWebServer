@@ -7,7 +7,7 @@ import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
-import com.openwebserver.core.Security.Authorization.Authentication;
+import com.openwebserver.core.Security.Authorization.Authorizor;
 import com.openwebserver.core.Security.CORS.Policy;
 import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Sessions.SessionManager;
@@ -24,6 +24,7 @@ public class RequestHandler extends Route implements RouteRegister{
     private SessionHandler sessionHandler = (annotation, session) -> session.hasRequired(annotation.require());
     private Session sessionSpecification;
     private final Headers headers = new Headers();
+
 
 
     public RequestHandler(Route notation, ContentHandler contentHandler) {
@@ -45,13 +46,24 @@ public class RequestHandler extends Route implements RouteRegister{
         if (!super.hasRequired(request)) {
             throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
         }
-        if(needsAuthentication() && !getAuthenticationHandler().authorize(request)){
+        if(needsAuthentication() && !getAuthorizor().authorize(request)){
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
         SessionManager.bind(sessionSpecification, request);
-        return contentHandler.respond(request).addHeaders(headers);
+        return contentHandler.respond(request); //RequestHandler specific Headers are moved to Routes class for WebException handlings
     }
 
+    public Headers getHeaders() {
+        return headers;
+    }
+
+    @Override
+    public void addPrefix(String prefix) {
+        super.addPrefix(prefix);
+        if(CORS_handler != null){
+            CORS_handler.addPrefix(prefix);
+        }
+    }
 
     //region sessions
     public void setSessionHandler(SessionHandler handler){
@@ -81,8 +93,8 @@ public class RequestHandler extends Route implements RouteRegister{
             notFound.printStackTrace();
         }
         if(policy != null){
-            headers.addAll(policy.get());
-            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(policy.get()));
+            headers.addAll(policy.pack());
+            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(policy.pack()));
         }
     }
 
@@ -100,14 +112,15 @@ public class RequestHandler extends Route implements RouteRegister{
     //endregion
 
     //region Authentication
-    protected Authentication authentication;
-    public void setAuthenticationHandler(Authentication authentication){
+    private Authorizor authorizor;
+    public void setAuthorizor(Authorizor authorizor){
         if(needsAuthentication()) {
-            this.authentication = authentication;
+            this.authorizor = authorizor;
         }
     }
-    protected Authentication getAuthenticationHandler() {
-        return authentication;
+
+    protected Authorizor getAuthorizor() {
+        return authorizor;
     }
     //endregion
 

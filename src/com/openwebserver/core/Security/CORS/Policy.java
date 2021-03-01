@@ -11,12 +11,13 @@ import java.util.function.Supplier;
 
 import static com.openwebserver.core.Routing.Route.*;
 
-public class Policy implements Supplier<Headers> {
+public class Policy{
 
     private final String name;
     private final ArrayList<String> allowedOrigins = new ArrayList<>();
     private final ArrayList<String> allowedHeaders = new ArrayList<>();
     private final ArrayList<Method> allowedMethods = new ArrayList<>();
+    private final Headers headers = new Headers();
 
     public Policy(String name){
         this.name = name;
@@ -54,9 +55,14 @@ public class Policy implements Supplier<Headers> {
         return this;
     }
 
-    @Override
-    public Headers get() {
+    public Policy addHeader(Header header){
+        headers.add(header);
+        return this;
+    }
+
+    public Headers pack(){
         Headers headers = new Headers();
+        headers.addAll(this.headers);
         headers.add(new Header("Access-Control-Allow-Origin", between(allowedOrigins, ",")));
         headers.add(new Header("Access-Control-Allow-Methods", between(allowedMethods, method -> {
             if(method.equals(Method.UNDEFINED)){
