@@ -42,8 +42,9 @@ public class Router {
     public static void handle(Connection connection){
         connection.handle((self, args) ->{
             try {
-                Request request = Request.deserialize(connection);
-                self.write(Router.find(request).handle(request));
+                System.out.println(self.getAddress());
+                Request request = Request.deserialize(self);
+                self.write(Router.find(request, self).handle(request));
             } catch (PrematureStreamException e) {
                   self.close();
             } catch (WebException e) {
@@ -54,9 +55,9 @@ public class Router {
         });
     }
 
-    private static Routes find(Request request) throws RoutingException.NotFoundException {
+    private static Routes find(Request request, Connection connection) throws RoutingException.NotFoundException {
         AtomicReference<Routes> requestHandler = new AtomicReference<>(null);
-        router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()), handlers -> handlers.forEach(routes -> {
+        router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()) && domain.getPort() == connection.getLocalPort(), handlers -> handlers.forEach(routes -> {
                 if(routes.matches(request)){
                     requestHandler.set(routes);
                 }
