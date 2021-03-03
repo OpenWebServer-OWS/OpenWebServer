@@ -52,32 +52,39 @@ public class Response implements Content {
             }
             else if (o instanceof Local) {
                     Local l = (Local) o;
-                    return new Response(code, new Content() {
-                        @Override
-                        public long length() {
-                            return l.getSize();
-                        }
+                    if(l.exists()) {
+                        return new Response(code, new Content() {
+                            @Override
+                            public long length() {
+                                return l.getSize();
+                            }
 
-                        @Override
-                        public Type getType() {
-                            return Type.wrap(l.getFilter().getMIME());
-                        }
+                            @Override
+                            public Type getType() {
+                                if(l.getFilter().getExtension().equals(".js")){
+                                    return Type.Application.edit("javascript");
+                                }
+                                return Type.wrap(l.getFilter().getMIME());
+                            }
 
-                        @Override
-                        public byte[] raw() {
-                            try {
-                                return l.read();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            @Override
+                            public byte[] raw() {
+                                try {
+                                    return l.read();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    return null;
+                                }
+                            }
+
+                            @Override
+                            public Headers getHeaders() {
                                 return null;
                             }
-                        }
-
-                        @Override
-                        public Headers getHeaders() {
-                            return null;
-                        }
-                    }, null);
+                        }, null);
+                    }else{
+                        return Response.simple(Code.Not_Found);
+                    }
             }
             else if (o instanceof WebException) {
                 return ((WebException) o).respond();
