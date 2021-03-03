@@ -1,14 +1,14 @@
+import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Domain;
+import com.openwebserver.core.Handlers.ContentHandler;
+import com.openwebserver.core.Handlers.RequestHandler;
+import com.openwebserver.core.Objects.Request;
+import com.openwebserver.core.Objects.Response;
+import com.openwebserver.core.Routing.Route;
 import com.openwebserver.core.Routing.Router;
-import com.openwebserver.core.Security.Authorization.JWT.JsonWebToken;
 import com.openwebserver.core.Security.CORS.Policy;
 import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.WebServer;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public class Main {
 
@@ -18,7 +18,7 @@ public class Main {
 
         new WebServer().addDomain(
                 new Domain()
-                    .addHandler(new Level2("/"))
+                    .addHandler(new RequestHandler(new Route("#", Route.Method.GET), request -> Response.simple(Code.Ok)))
         ).start();
         Router.print();
 

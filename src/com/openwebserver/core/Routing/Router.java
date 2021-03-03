@@ -25,6 +25,10 @@ public class Router {
         getInstance().routes.populate(domain);
         Routes routes = null;
         for (Routes routes1 : getInstance().routes.branch(domain)) {
+            if(routes.getPath().equals("#")){
+                System.out.println("Routes wildcard found");
+                break;
+            }
             if(routes1.getPath().equals(handler.getPath())){
                 routes1.add(handler);
                 routes = routes1;
