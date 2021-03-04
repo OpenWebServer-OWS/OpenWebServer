@@ -173,7 +173,6 @@ public class Request{
         return fields;
     }
 
-
     private void MultipartDecoder(byte[] encoded) throws RequestException.DecodingException {
         try {
             boolean done = false;
@@ -209,9 +208,7 @@ public class Request{
         return method;
     }
 
-
     private static class FormData {
-
 
         private final Headers headers;
         private final int headerLength;
@@ -223,7 +220,7 @@ public class Request{
             this.headers = Headers.Decode(head);
             this.headerLength = head.length();
         }
-
+        
         public static FormData decode(byte[] data) throws ByteReader.ByteReaderException.PrematureStreamException {
             return new FormData(new ByteReader(data).readUntil(Headers.end).toString()).setData(data);
         }
