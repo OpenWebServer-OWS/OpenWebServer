@@ -220,7 +220,7 @@ public class Request{
             this.headers = Headers.Decode(head);
             this.headerLength = head.length();
         }
-        
+
         public static FormData decode(byte[] data) throws ByteReader.ByteReaderException.PrematureStreamException {
             return new FormData(new ByteReader(data).readUntil(Headers.end).toString()).setData(data);
         }
