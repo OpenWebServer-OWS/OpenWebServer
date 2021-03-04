@@ -50,6 +50,7 @@ public class Policy{
         allowedMethods.add(Method.UNDEFINED);
         return this;
     }
+
     public Policy AllowAnyOrgin(){
         allowedOrigins.add("*");
         return this;
@@ -92,10 +93,12 @@ public class Policy{
 
     @Override
     public String toString() {
-        return name+"{" +
-                "allowedOrigins=" + allowedOrigins +
+        return "Policy{" +
+                "name='" + name + '\'' +
+                ", allowedOrigins=" + allowedOrigins +
                 ", allowedHeaders=" + allowedHeaders +
                 ", allowedMethods=" + allowedMethods +
+                ", headers=" + headers +
                 '}';
     }
 }

@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 
 public @interface Route{
+
     String path();
     com.openwebserver.core.Routing.Route.Method method() default com.openwebserver.core.Routing.Route.Method.UNDEFINED;
     String[] require() default {};

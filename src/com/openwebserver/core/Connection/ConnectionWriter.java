@@ -48,9 +48,10 @@ public interface ConnectionWriter {
             if(!(content instanceof HandOverObject)){
                 close();
             }
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            close();
         }
-
     }
 
     default void writeOpen(ConnectionContent content) throws IOException {
@@ -87,7 +88,5 @@ public interface ConnectionWriter {
             return new byte[0];
         }
     }
-
-
 
 }

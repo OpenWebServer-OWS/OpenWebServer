@@ -23,7 +23,6 @@ public class Header extends Pair<String, String> implements Serializer<String>, 
         this.attributes = new ArrayList<>(Arrays.asList(attributes));
     }
 
-
     public Header(String key, String value) {
         super(key, value);
         this.attributes = new ArrayList<>();

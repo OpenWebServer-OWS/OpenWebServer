@@ -45,8 +45,6 @@ public class JsonWebToken implements Authorizor<JsonWebToken> {
     }
 
     public static String hash(String secret,String data) throws NoSuchAlgorithmException, InvalidKeyException {
-        //MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        //digest.digest(secret.getBytes(StandardCharsets.UTF_8));
         Mac sha256Hmac = Mac.getInstance("HmacSHA256");
         SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         sha256Hmac.init(secretKey);
@@ -109,7 +107,6 @@ public class JsonWebToken implements Authorizor<JsonWebToken> {
     }
 
     public static class JsonWebTokenException extends AuthorizorException {
-
         public JsonWebTokenException(String message) {
             super(message);
         }

@@ -16,8 +16,6 @@ import java.util.Objects;
 
 public class WebServer{
 
-
-
     private final String name;
     public static Header serverHeader;
     public static Folder tempFolder;

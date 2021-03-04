@@ -18,14 +18,10 @@ import java.util.function.Consumer;
 
 public class RequestHandler extends Route implements RouteRegister{
 
-
     private ContentHandler contentHandler;
-
     private SessionHandler sessionHandler = (annotation, session) -> session.hasRequired(annotation.require());
     private Session sessionSpecification;
     private final Headers headers = new Headers();
-
-
 
     public RequestHandler(Route notation, ContentHandler contentHandler) {
         this(notation,contentHandler,null);
@@ -50,7 +46,7 @@ public class RequestHandler extends Route implements RouteRegister{
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
         SessionManager.bind(sessionSpecification, request);
-        return contentHandler.respond(request); //RequestHandler specific Headers are moved to Routes class for WebException handlings
+        return contentHandler.respond(request);
     }
 
     public Headers getHeaders() {

@@ -51,6 +51,7 @@ public class WebException extends Throwable {
         }
         return this;
     }
+
     public WebException addHeaders(Headers headers){
         this.headers.addAll(headers);
         return this;
@@ -94,7 +95,6 @@ public class WebException extends Throwable {
     public WebException(String message){
         this(Code.Internal_Server_Error, message);
     }
-
 
     public WebException(WebException e){
         this(e.getCode(), e.getMessage());

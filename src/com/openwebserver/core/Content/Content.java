@@ -33,7 +33,6 @@ public interface Content extends ConnectionContent {
         return this;
     }
 
-
     Headers getHeaders();
 
     default void HEAD() {
@@ -89,7 +88,6 @@ public interface Content extends ConnectionContent {
             this.type = type;
             return category + "/" + type;
         }
-
 
     }
 

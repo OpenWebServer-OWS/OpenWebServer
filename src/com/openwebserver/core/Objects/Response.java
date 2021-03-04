@@ -82,7 +82,8 @@ public class Response implements Content {
                                 return null;
                             }
                         }, null);
-                    }else{
+                    }
+                    else{
                         return Response.simple(Code.Not_Found);
                     }
             }

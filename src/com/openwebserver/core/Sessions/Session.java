@@ -33,7 +33,6 @@ public class Session extends Cookie {
         this.id = id;
     }
 
-
     public Session setPath(String path){
         super.setPath(path);
         return this;

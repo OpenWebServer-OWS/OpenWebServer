@@ -20,7 +20,6 @@ public class Router {
 
     private Router(){}
 
-
     public static void register(Domain domain, RequestHandler handler){
         getInstance().routes.populate(domain);
         Routes routes = null;
@@ -48,9 +47,9 @@ public class Router {
             } catch (PrematureStreamException e) {
                   self.close();
             } catch (WebException e) {
-                connection.write(e.respond());
+                self.write(e.respond());
             } catch (Throwable throwable) {
-                connection.write(new WebException(throwable).respond(true));
+                self.write(new WebException(throwable).respond(true));
             }
         });
     }

@@ -13,12 +13,10 @@ import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Routing.Route;
 import com.openwebserver.core.Routing.Routes;
 import com.openwebserver.core.Routing.Router;
-
 import com.openwebserver.core.Sessions.Session;
 import com.openwebserver.core.WebException;
 import com.openwebserver.core.WebServer;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -36,7 +34,6 @@ public class Request{
     public Session session;
 
     public HashMap<String, Object> AUTH = new HashMap<>();
-
 
     public final Headers headers;
     public final String path;
@@ -112,18 +109,11 @@ public class Request{
         return handler;
     }
 
-    //region request access
-
     public <T> T access(ConnectionManager.Access access) throws IOException, ConnectionManager.ConnectionManagerException {
         return (T) ConnectionManager.Access(connectionRef, access.getReturnType());
     }
 
-
-    //endregion
-
     //region file handling
-
-
     public String getPath() {
         return path;
     }
@@ -134,7 +124,6 @@ public class Request{
         }
         return getPath();
     }
-
 
     public boolean isFile(){
         return getPath(true).contains(".");
@@ -202,9 +191,7 @@ public class Request{
                     } catch (ByteReader.ByteReaderException.PrematureStreamException e) {
                         e.printStackTrace();
                     }
-
                 }
-
                 @Override
                 public void OnException(Throwable t) {
                     t.printStackTrace();

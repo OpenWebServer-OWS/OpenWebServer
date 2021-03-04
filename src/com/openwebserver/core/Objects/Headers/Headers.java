@@ -95,7 +95,6 @@ public class Headers extends ArrayList<Header> implements ConnectionContent, Des
         return this;
     }
 
-
     public String getMethod() {
         return get(0).raw().split(" ")[0].trim();
     }

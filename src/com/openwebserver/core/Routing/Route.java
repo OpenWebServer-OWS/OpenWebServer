@@ -39,7 +39,6 @@ public class Route {
     private Domain domain;
     private boolean needsAuthorization = false;
 
-
     public Route(String path, Method method, String ... require){
         this.path = path;
         this.method = method;

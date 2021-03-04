@@ -64,7 +64,6 @@ public class Domain {
         return secure;
     }
 
-
     public String getAlias() {
         return this.alias;
     }
@@ -82,7 +81,6 @@ public class Domain {
     public Certificate<PrivateKey> getPrivateKey() {
         return privateKey;
     }
-
 
     @Override
     public String toString() {

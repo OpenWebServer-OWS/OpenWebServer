@@ -19,11 +19,9 @@ public interface Authorizor<T> {
     public BiFunction<Request, T, Boolean> getValidator();
 
     public static class AuthorizorException extends WebException{
-
         public AuthorizorException(String message) {
             super(Code.Unauthorized, message);
         }
     }
-
 
 }
