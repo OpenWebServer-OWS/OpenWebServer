@@ -50,7 +50,7 @@ public class RequestHandler extends Route implements RouteRegister{
             SessionManager.bind(sessionSpecification, request);
         }catch (com.openwebserver.core.Sessions.Session.SessionException e){
             if(sessionSpecification != null && !sessionSpecification.redirect().equals("")){
-                return Response.simple(Code.Permanent_Redirect).addHeader(new Header("Location", sessionSpecification.redirect()));
+                return Response.simple(Code.Temporary_Redirect).addHeader(new Header("Location", sessionSpecification.redirect()));
             }
         }
         return contentHandler.respond(request);
