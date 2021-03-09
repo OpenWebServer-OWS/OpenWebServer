@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 
 public class Attribute<T> extends Pair<T, T> {
 
-    public static String KeyValueSeparator = "=";
-    public static String KeyValuePairSeparator = ";";
+    public final static String KeyValueSeparator = "=";
+    public final static String KeyValuePairSeparator = ";";
 
     public Attribute(T key, T value) {
         super(key, value);

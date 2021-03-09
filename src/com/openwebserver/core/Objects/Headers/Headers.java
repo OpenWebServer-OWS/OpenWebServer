@@ -1,8 +1,6 @@
 package com.openwebserver.core.Objects.Headers;
 
 import ByteReader.ByteReader;
-import Collective.Collective;
-import Serialization.Deserializer;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Connection.ConnectionContent;
 
@@ -12,9 +10,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class Headers extends ArrayList<Header> implements ConnectionContent, Deserializer<Headers, String> {
+public class Headers extends ArrayList<Header> implements ConnectionContent {
 
-    public static String end = Header.separator + Header.separator;
+    public final static String end = Header.separator + Header.separator;
 
     public Headers(Header... headers) {
         addAll(Arrays.asList(headers));
@@ -72,22 +70,17 @@ public class Headers extends ArrayList<Header> implements ConnectionContent, Des
     @Override
     public byte[] get() {
         StringBuilder contentBuilder = new StringBuilder();
-        Collective.On(new Collective<Header>() {
-            @Override
-            public void forEach(Header header) {
-                contentBuilder.append(header.serialize());
-            }
 
-            @Override
-            public void between() {
+        for (int i = 0; i < this.size(); i++) {
+            contentBuilder.append(this.get(i).serialize());
+            if (i != this.size() - 1) {
                 contentBuilder.append(Header.separator);
             }
-        }, this);
+        }
         contentBuilder.append(Headers.end);
         return contentBuilder.toString().getBytes();
     }
 
-    @Override
     public Headers deserialize(String encoded) {
         for (String encodedHeader : encoded.split(Header.separator)) {
             this.add(Header.Decode(encodedHeader));

@@ -2,7 +2,7 @@ package com.openwebserver.core.Security.SSL;
 
 import ByteReader.ByteReader;
 import FileManager.Local;
-import Serialization.Deserializer;
+
 
 import java.io.IOException;
 import java.security.KeyFactory;
@@ -15,7 +15,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
-public class Certificate<T> implements Deserializer<T, Local> {
+public class Certificate<T>{
 
     private byte[] encoded;
     private Type type;
@@ -26,7 +26,6 @@ public class Certificate<T> implements Deserializer<T, Local> {
         deserialize(l);
     }
 
-    @Override
     public T deserialize(Local key) {
         try {
             this.encoded = key.read();

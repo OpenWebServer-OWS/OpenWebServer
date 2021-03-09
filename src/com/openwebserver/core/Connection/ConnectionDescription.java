@@ -20,10 +20,10 @@ public class ConnectionDescription {
     private String[] supportedCipherSuites;
     private String[] enabledCipherSuites;
     private boolean ssl = false;
-    private ServerSocketChannel channel;
-    private InetAddress inetAddress;
-    private int localPort;
-    private SocketAddress localSocketAddress;
+    private final ServerSocketChannel channel;
+    private final InetAddress inetAddress;
+    private final int localPort;
+    private final SocketAddress localSocketAddress;
     private int receiveBufSize;
     private boolean reuseAddresses;
     private int timeOut;

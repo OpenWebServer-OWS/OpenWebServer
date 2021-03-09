@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class KeyManager implements X509KeyManager {
 
-    public static String StoreType = "PKCS12";
+    public final static String StoreType = "PKCS12";
     private static KeyManager manager;
     private static KeyStore store = null;
     private X509KeyManager defaultKeyManager;

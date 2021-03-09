@@ -41,7 +41,6 @@ public class Router {
     public static void handle(Connection connection){
         connection.handle((self, args) ->{
             try {
-                System.out.println(self.getAddress());
                 Request request = Request.deserialize(self);
                 self.write(Router.find(request, self).handle(request));
             } catch (PrematureStreamException e) {

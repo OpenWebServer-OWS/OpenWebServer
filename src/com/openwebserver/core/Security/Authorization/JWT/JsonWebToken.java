@@ -13,7 +13,6 @@ import java.util.Base64;
 import java.util.function.BiFunction;
 
 import static java.nio.charset.StandardCharsets.*;
-import static java.util.Base64.getUrlDecoder;
 
 public class JsonWebToken implements Authorizor<JsonWebToken> {
 

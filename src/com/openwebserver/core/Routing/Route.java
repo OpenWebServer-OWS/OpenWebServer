@@ -11,7 +11,6 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static Collective.Collective.doIf;
 
 public class Route {
 
@@ -88,12 +87,12 @@ public class Route {
 
     public void addPrefix(String prefix) {
         String finalPrefix = prefix.contains("//")?prefix.replaceAll("//", ""): prefix;
-        doIf(!this.path.contains(prefix), o -> this.path = finalPrefix + getPath());
-        doIf(path.contains("//"), o -> path = path.replaceAll("//", "/"));
-        doIf(isREST(), o ->{
+        if(!this.path.contains(prefix)) this.path = finalPrefix + getPath();
+        if(path.contains("//")) path = path.replaceAll("//", "/");
+        if(isREST()){
             RESTParams.clear();
             RESTDecoder.PatternReader(path, RESTParams::put);
-        });
+        }
     }
 
     private boolean isREST() {
@@ -110,7 +109,7 @@ public class Route {
 
     public static class RESTDecoder {
 
-        public static Pattern pattern = Pattern.compile("\\{(.*?)}", Pattern.MULTILINE);
+        public final static Pattern pattern = Pattern.compile("\\{(.*?)}", Pattern.MULTILINE);
 
         public static boolean containsRegex(String path){
             return path.contains("{") && path.contains("}");
