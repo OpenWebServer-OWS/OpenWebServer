@@ -11,7 +11,6 @@ import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Routing.Route;
-import com.openwebserver.core.Routing.Routes;
 import com.openwebserver.core.Routing.Router;
 import com.openwebserver.core.Sessions.Session;
 import com.openwebserver.core.WebException;
@@ -27,8 +26,8 @@ import java.util.UUID;
 public class Request{
 
     protected HashMap<String, Object> POST = new HashMap<>();
-    protected HashMap<String, String> GET;
-    protected HashMap<String, Pair<String, Local>> FILES = new HashMap<>();
+    protected final HashMap<String, String> GET;
+    protected final HashMap<String, Pair<String, Local>> FILES = new HashMap<>();
 
     public HashMap<String, Object> SESSION;
     public Session session;
@@ -38,7 +37,7 @@ public class Request{
     public final Headers headers;
     public final String path;
     public final Route.Method method;
-    private Domain domain;
+    private final Domain domain;
     private String connectionRef;
     private RequestHandler handler;
 

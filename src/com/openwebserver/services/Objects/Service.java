@@ -13,11 +13,11 @@ import com.openwebserver.core.WebException;
 import com.openwebserver.services.ServiceManager;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static Collective.Collective.doForEach;
 
 public class Service extends RequestHandler {
 
@@ -32,22 +32,25 @@ public class Service extends RequestHandler {
         super(new Route(path, Route.Method.UNDEFINED),null);
         this.name = Objects.requireNonNullElseGet(name, () -> getClass().getSimpleName());
         //region create route annotations
-        doForEach(this.getClass().getDeclaredMethods(), (method -> method.isAnnotationPresent(com.openwebserver.services.Annotations.Route.class)), method ->{
-            RequestHandler requestHandler = new RequestHandler(new Route(method.getAnnotation(com.openwebserver.services.Annotations.Route.class)), request -> {
-                try {
-                    return ((Response) method.invoke(Service.this, request));
-                } catch (InvocationTargetException e) {
-                    throw new WebException(e).addRequest(request);
-                }
-            });
-            requestHandler.setSessionSpecification(method.isAnnotationPresent(Session.class)? method.getAnnotation(Session.class): null);
-            requestHandler.setSessionHandler(this.getSessionHandler());
-            requestHandler.setCORSPolicy(method.isAnnotationPresent(CORS.class)? method.getAnnotation(CORS.class).value(): null);
-            requestHandler.setNeedsAuthentication(method.isAnnotationPresent(Authorize.class));
-            requestHandler.addPrefix(this);
-            routes.add(requestHandler);
-        });
+        for (java.lang.reflect.Method method : this.getClass().getDeclaredMethods()) {
+            if(method.isAnnotationPresent(com.openwebserver.services.Annotations.Route.class)){
+                RequestHandler requestHandler = new RequestHandler(new Route(method.getAnnotation(com.openwebserver.services.Annotations.Route.class)), request -> {
+                    try {
+                        return ((Response) method.invoke(Service.this, request));
+                    } catch (InvocationTargetException e) {
+                        throw new WebException(e).addRequest(request);
+                    }
+                });
+                requestHandler.setSessionSpecification(method.isAnnotationPresent(Session.class)? method.getAnnotation(Session.class): null);
+                requestHandler.setSessionHandler(this.getSessionHandler());
+                requestHandler.setCORSPolicy(method.isAnnotationPresent(CORS.class)? method.getAnnotation(CORS.class).value(): null);
+                requestHandler.setNeedsAuthentication(method.isAnnotationPresent(Authorize.class));
+                requestHandler.addPrefix(this);
+                routes.add(requestHandler);
+            }
+        }
         ServiceManager.register(this);
+
         //endregion
     }
 

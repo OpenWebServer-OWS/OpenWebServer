@@ -1,17 +1,15 @@
 package com.openwebserver.core.Objects.Headers;
 
-import Collective.Collective;
 import Pair.Pair;
-import Serialization.Deserializer;
-import Serialization.Serializer;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Header extends Pair<String, String> implements Serializer<String>, Deserializer<Header, String> {
+public class Header extends Pair<String, String> {
 
     public static String separator = "\r\n";
-    public static String KeyValueSeparator = ":";
+    public final static String KeyValueSeparator = ":";
 
     private final ArrayList<Attribute<String>> attributes;
 
@@ -70,29 +68,22 @@ public class Header extends Pair<String, String> implements Serializer<String>, 
         return this;
     }
 
-    @Override
     public String serialize() {
         if (raw != null) {
             return raw;
         } else {
             StringBuilder builder = new StringBuilder();
             builder.append(getKey()).append(KeyValueSeparator).append(getValue()!= null? getValue(): "");
-            Collective.On(new Collective<Attribute<String>>() {
-                @Override
-                public void forEach(Attribute<String> attribute) {
-                    builder.append(attribute.toString());
-                }
-
-                @Override
-                public void between() {
+            for (int i = 0; i < attributes.size(); i++) {
+                builder.append(attributes.get(i).toString());
+                if (i != attributes.size() - 1) {
                     builder.append(Attribute.KeyValuePairSeparator);
                 }
-            }, attributes);
+            }
             return builder.toString();
         }
     }
 
-    @Override
     public Header deserialize(String encoded) {
         if (!encoded.contains(KeyValueSeparator)) {
             return Header.raw(encoded);

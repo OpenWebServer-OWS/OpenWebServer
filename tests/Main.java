@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         new WebServer().addDomain(
                 new Domain()
-                    .addHandler(new Service("/"))
+                    .addHandler(new SessionTest("/"))
         ).start();
         Router.print();
     }

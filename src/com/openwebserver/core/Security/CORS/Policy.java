@@ -2,12 +2,11 @@ package com.openwebserver.core.Security.CORS;
 
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
-import com.openwebserver.core.Routing.Route;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static com.openwebserver.core.Routing.Route.*;
 
@@ -64,7 +63,7 @@ public class Policy{
     public Headers pack(){
         Headers headers = new Headers();
         headers.addAll(this.headers);
-        headers.add(new Header("Access-Control-Allow-Origin", between(allowedOrigins, ",")));
+        headers.add(new Header("Access-Control-Allow-Origin", between(allowedOrigins)));
         headers.add(new Header("Access-Control-Allow-Methods", between(allowedMethods, method -> {
             if(method.equals(Method.UNDEFINED)){
                 return "*";
@@ -72,12 +71,12 @@ public class Policy{
                 return method.name();
             }
         }, ",")));
-        headers.add(new Header("Access-Control-Allow-Headers", between(allowedHeaders, ",")));
+        headers.add(new Header("Access-Control-Allow-Headers", between(allowedHeaders)));
         return headers;
     }
 
-    private static <T> String between(ArrayList<T> collection, String separator){
-        return between(collection, Object::toString, separator);
+    private static <T> String between(ArrayList<T> collection){
+        return between(collection, Object::toString, ",");
     }
 
     private static <T> String between(ArrayList<T> collection, Function<T, String> editor,String separator){

@@ -1,7 +1,7 @@
 package com.openwebserver.core.Content;
 
 
-import Collective.Collective;
+import ByteReader.ByteReader;
 import com.openwebserver.core.Connection.ConnectionContent;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
@@ -24,8 +24,9 @@ public interface Content extends ConnectionContent {
 
     byte[] raw();
 
+
     default byte[] get() {
-        return Collective.Concat(getHeaders().get(), raw());
+        return ByteReader.combine(getHeaders().get(), raw());
     }
 
     default Content addHeader(Header... headers){

@@ -12,8 +12,8 @@ import java.util.function.Function;
 public class Session extends Cookie {
 
     public static String name = "OWS_SESSION";
-    public String id;
-    public HashMap<String, Object> store = new HashMap<>();
+    public final String id;
+    public final HashMap<String, Object> store = new HashMap<>();
     public Date lastSeen;
 
     public Session(String id, String path) {

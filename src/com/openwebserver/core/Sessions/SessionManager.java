@@ -1,10 +1,9 @@
 package com.openwebserver.core.Sessions;
 
 
-import com.openwebserver.core.Content.Code;
+
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Request;
-import com.openwebserver.core.WebException;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,7 +11,7 @@ import java.util.HashMap;
 
 public class SessionManager{
 
-    public static SessionManager manager = new SessionManager();
+    public final static SessionManager manager = new SessionManager();
     private final HashMap<String, Session> sessions = new HashMap<>();
 
     private SessionManager(){}
