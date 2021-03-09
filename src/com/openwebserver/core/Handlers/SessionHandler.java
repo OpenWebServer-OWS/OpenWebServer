@@ -10,8 +10,8 @@ public interface SessionHandler {
 
     boolean check(Session annotation, com.openwebserver.core.Sessions.Session session);
 
-    default WebException decline(Request request, Throwable t){
-        return new WebException(Code.Unauthorized, t).addRequest(request);
+    default com.openwebserver.core.Sessions.Session.SessionException decline(Request request, Throwable t){
+        return new com.openwebserver.core.Sessions.Session.SessionException(t.getMessage());
     }
 
 }

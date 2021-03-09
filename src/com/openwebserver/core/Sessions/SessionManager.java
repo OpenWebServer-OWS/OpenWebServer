@@ -40,7 +40,7 @@ public class SessionManager{
         Session.name = name;
     }
 
-    public static void bind(com.openwebserver.core.Annotations.Session annotation, Request request) throws WebException {
+    public static void bind(com.openwebserver.core.Annotations.Session annotation, Request request) throws Session.SessionException {
         if(annotation == null){
             return;
         }
