@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Session {
     String[] require() default {};
+    String redirect() default "";
 }

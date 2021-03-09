@@ -3,6 +3,7 @@ package com.openwebserver.core.Handlers;
 
 import com.openwebserver.core.Annotations.Session;
 import com.openwebserver.core.Content.Code;
+import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
@@ -45,7 +46,13 @@ public class RequestHandler extends Route implements RouteRegister{
         if(needsAuthentication() && !getAuthorizor().authorize(request)){
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
-        SessionManager.bind(sessionSpecification, request);
+        try {
+            SessionManager.bind(sessionSpecification, request);
+        }catch (com.openwebserver.core.Sessions.Session.SessionException e){
+            if(sessionSpecification != null && !sessionSpecification.redirect().equals("")){
+                return Response.simple(Code.Permanent_Redirect).addHeader(new Header("Location", sessionSpecification.redirect()));
+            }
+        }
         return contentHandler.respond(request);
     }
 
