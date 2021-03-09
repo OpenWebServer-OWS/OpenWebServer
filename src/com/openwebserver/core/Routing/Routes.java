@@ -28,9 +28,17 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
-            System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
+            if(handler.getRequired().length >0){
+                System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
+            }
             if(handler.getPolicyName() != null) {
                 System.out.println("\t\tPOLICY:" + handler.getPolicy());
+            }
+            if(handler.getSessionSpecification() != null) {
+                System.out.println("\t\tSESSION:" +  "{" +
+                        "required=" + Arrays.toString(handler.getSessionSpecification().require()) +
+                        ", redirect=" + handler.getSessionSpecification().redirect() +
+                        '}');
             }
             if(handler.needsAuthentication()) {
                 System.out.println("\t\tAUTHENTICATION: REQUIRED");

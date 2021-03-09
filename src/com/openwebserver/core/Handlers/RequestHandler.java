@@ -80,6 +80,10 @@ public class RequestHandler extends Route implements RouteRegister{
     public  SessionHandler getSessionHandler() {
         return sessionHandler;
     }
+
+    public Session getSessionSpecification() {
+        return sessionSpecification;
+    }
     //endregion
 
     //region CORS
