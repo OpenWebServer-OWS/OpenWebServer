@@ -45,7 +45,7 @@ public class WebException extends Throwable {
         this(Code.Internal_Server_Error, t);
     }
 
-    public WebException addHeader(Header ... headers){
+    public WebException addHeader(Header... headers){
         for (Header header : headers) {
             this.headers.add(header);
         }

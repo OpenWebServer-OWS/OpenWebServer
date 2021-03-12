@@ -70,9 +70,9 @@ public class JsonWebToken implements Authorizer<JsonWebToken> {
     }
 
     @Override
-    public JsonWebToken decode(Request request) throws AuthorizorException {
+    public JsonWebToken decode(Request request) throws AuthorizerException {
         final JsonWebToken[] token = {null};
-        final AuthorizorException[] exceptions = {null};
+        final AuthorizerException[] exceptions = {null};
         if(request.headers.tryGet("Authorization", header -> {
             try {
                 token[0] = new JsonWebToken(header.getValue().split(" ")[1]);
@@ -86,7 +86,7 @@ public class JsonWebToken implements Authorizer<JsonWebToken> {
             return token[0];
         }
 
-        throw new AuthorizorException("Authorization header not found");
+        throw new AuthorizerException("Authorization header not found");
     }
 
     @Override
@@ -105,7 +105,7 @@ public class JsonWebToken implements Authorizer<JsonWebToken> {
         return authorizor;
     }
 
-    public static class JsonWebTokenException extends AuthorizorException {
+    public static class JsonWebTokenException extends AuthorizerException {
         public JsonWebTokenException(String message) {
             super(message);
         }

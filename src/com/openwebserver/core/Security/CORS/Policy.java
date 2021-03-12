@@ -2,20 +2,19 @@ package com.openwebserver.core.Security.CORS;
 
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
+import com.openwebserver.core.Routing.Route;
 
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import static com.openwebserver.core.Routing.Route.*;
-
 public class Policy{
 
     private final String name;
     private final ArrayList<String> allowedOrigins = new ArrayList<>();
     private final ArrayList<String> allowedHeaders = new ArrayList<>();
-    private final ArrayList<Method> allowedMethods = new ArrayList<>();
+    private final ArrayList<Route.Method> allowedMethods = new ArrayList<>();
     private final Headers headers = new Headers();
 
     public Policy(String name){
@@ -40,13 +39,13 @@ public class Policy{
         return AllowHeader("*");
     }
 
-    public Policy AllowMethod(Method ... methods){
+    public Policy AllowMethod(Route.Method... methods){
         allowedMethods.addAll(Arrays.asList(methods));
         return this;
     }
 
     public Policy AllowAnyMethods(){
-        allowedMethods.add(Method.UNDEFINED);
+        allowedMethods.add(Route.Method.UNDEFINED);
         return this;
     }
 
@@ -65,7 +64,7 @@ public class Policy{
         headers.addAll(this.headers);
         headers.add(new Header("Access-Control-Allow-Origin", between(allowedOrigins)));
         headers.add(new Header("Access-Control-Allow-Methods", between(allowedMethods, method -> {
-            if(method.equals(Method.UNDEFINED)){
+            if(method.equals(Route.Method.UNDEFINED)){
                 return "*";
             }else{
                 return method.name();
