@@ -22,20 +22,22 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     }
 
     public void print() {
-        values().forEach(handler ->{
-            try {
-                System.out.println("\t" + handler.getMethod().toString() + ":" +  getDomain().getUrl().toString()+handler.getPath());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
-            if(handler.getPolicyName() != null) {
-                System.out.println("\t\tPOLICY:" + handler.getPolicy());
-            }
-            if(handler.needsAuthentication()) {
-                System.out.println("\t\tAUTHENTICATION: REQUIRED");
-            }
-        });
+        values().forEach(Routes::Print);
+    }
+
+    public static void Print(RequestHandler handler){
+        try {
+            System.out.println("\t" + handler.getMethod().toString() + ":" +  handler.getDomain().getUrl().toString()+handler.getPath());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
+        if(handler.getPolicyName() != null) {
+            System.out.println("\t\tPOLICY:" + handler.getPolicy());
+        }
+        if(handler.needsAuthentication()) {
+            System.out.println("\t\tAUTHENTICATION: REQUIRED");
+        }
     }
 
     public Domain getDomain() {

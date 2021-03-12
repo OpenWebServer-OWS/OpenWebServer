@@ -11,12 +11,6 @@ public class SessionTest extends Service {
         super(path);
     }
 
-
-    @Route(path = "/", method = Method.GET)
-    public Response test(Request request){
-        return Response.simple(Code.Ok);
-    }
-
     @Session(redirect = "https://google.com")
     @Route(path = "/session", method = Method.GET)
     public Response info(Request request){
@@ -28,9 +22,13 @@ public class SessionTest extends Service {
         return Response.simple(Code.Ok).addHeader(new com.openwebserver.core.Sessions.Session().store("hello", 123));
     }
 
-    @Session(redirect = "https://google.com")
+    @Session
     @Route(path = "/unbind", method = Method.GET)
     public Response unbind(Request request){
-        return Response.simple(Code.Ok).addHeader(request.session.revoke());
+        if(request.session != null) {
+            return Response.simple(Code.Ok).addHeader(request.session.revoke());
+        }else{
+            return Response.simple(Code.Not_Found);
+        }
     }
 }
