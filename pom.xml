@@ -12,5 +12,43 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.TreeArrayList</groupId>
+            <artifactId>TreeArrayList</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/ByteReader.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.FileManager</groupId>
+            <artifactId>FileManager</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/FileManager.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.json</groupId>
+            <artifactId>json</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/json-20190722.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.pair</groupId>
+            <artifactId>pair</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/Pair.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.reflection</groupId>
+            <artifactId>reflection</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/Reflection.jar</systemPath>
+        </dependency>
+    </dependencies>
     
 </project>
