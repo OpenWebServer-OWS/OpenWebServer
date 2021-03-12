@@ -37,6 +37,7 @@ public class Route {
     private final HashMap<Integer, String> RESTParams = new HashMap<>();
     private Domain domain;
     private boolean needsAuthorization = false;
+    private boolean enabled = true;
 
     public Route(String path, Method method, String ... require){
         this.path = path;
@@ -51,10 +52,18 @@ public class Route {
     public Route(com.openwebserver.services.Annotations.Route route){
         this(route.path(), route.method(), route.require());
     }
-
+    
     public Route(Route route){
         this(route.getPath(), route.getMethod(), route.getRequired());
         this.domain = route.domain;
+    }
+
+    public void disable(){
+        enabled = false;
+    }
+
+    public void enable(){
+        enabled = true;
     }
 
     public boolean needsAuthentication() {
@@ -65,7 +74,7 @@ public class Route {
         this.needsAuthorization = authorized;
     }
 
-    protected Method getMethod() {
+    public Method getMethod() {
         return method;
     }
 
@@ -75,6 +84,10 @@ public class Route {
 
     protected boolean hasRequired(Request request) {
         return request.GET().keySet().containsAll(Arrays.asList(getRequired())) || request.POST().keySet().containsAll(Arrays.asList(getRequired()));
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public String getPath() {

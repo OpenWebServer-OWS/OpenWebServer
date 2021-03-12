@@ -61,6 +61,7 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     }
 
     public Routes add(RequestHandler handler){
+        handler.setDomain(route.getDomain());
         put(handler.getMethod(), handler);
         return this;
     }
@@ -71,13 +72,16 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
             handler = get(request.getMethod());
         }else if(containsKey(Route.Method.UNDEFINED)){
             handler = get(Route.Method.UNDEFINED);
-            return get(Route.Method.UNDEFINED).handle(request);
         }
         if(handler != null){
-            try {
-                return handler.handle(request).addHeaders(handler.getHeaders());
-            }catch (WebException e){
-                throw e.addHeaders(handler.getHeaders());
+            if(handler.isEnabled()) {
+                try {
+                    return handler.handle(request).addHeaders(handler.getHeaders());
+                } catch (WebException e) {
+                    throw e.addHeaders(handler.getHeaders());
+                }
+            }else{
+                return Response.simple(Code.Disabled, "Route disabled on path '"+handler.getPath()+"' with method '"+handler.getMethod()+"'");
             }
         }
         else{

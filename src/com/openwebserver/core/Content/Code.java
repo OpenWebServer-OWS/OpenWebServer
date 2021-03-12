@@ -271,6 +271,13 @@ public enum Code {
      */
     Request_Header_Fields_Too_Large(431, "Request Header Fields Too Large"),
     /**
+     * Route disabled by WebAdmin.
+     * @apiNote CUSTOM OpenWebServer Response code
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/451>https://developer.mozilla.org</a>
+     */
+    Disabled(444, "Route disabled"),
+
+    /**
      * The user requests an illegal resource, such as a web page censored by a government.
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/451>https://developer.mozilla.org</a>
      */
