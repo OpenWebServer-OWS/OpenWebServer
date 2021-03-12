@@ -7,13 +7,12 @@ import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
 import com.openwebserver.core.Security.Authorization.Authorize;
-import com.openwebserver.core.Security.Authorization.Authorizor;
+import com.openwebserver.core.Security.Authorization.Authorizer;
 import com.openwebserver.core.Security.CORS.CORS;
 import com.openwebserver.core.WebException;
 import com.openwebserver.services.ServiceManager;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -66,10 +65,10 @@ public class Service extends RequestHandler {
     }
 
     @Override
-    public void setAuthorizor(Authorizor authorizor) {
-        super.setAuthorizor(authorizor);
+    public void setAuthorizer(Authorizer authorizer) {
+        super.setAuthorizer(authorizer);
         routes.forEach(handler -> {
-            handler.setAuthorizor(authorizor);
+            handler.setAuthorizer(authorizer);
         });
     }
 

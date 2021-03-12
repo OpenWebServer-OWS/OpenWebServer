@@ -6,7 +6,7 @@ import com.openwebserver.core.WebException;
 
 import java.util.function.BiFunction;
 
-public interface Authorizor<T> {
+public interface Authorizer<T> {
 
     public default boolean authorize(Request request) throws AuthorizorException {
         return getValidator().apply(request, decode(request));

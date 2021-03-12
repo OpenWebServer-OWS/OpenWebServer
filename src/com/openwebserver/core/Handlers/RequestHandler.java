@@ -8,7 +8,7 @@ import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
-import com.openwebserver.core.Security.Authorization.Authorizor;
+import com.openwebserver.core.Security.Authorization.Authorizer;
 import com.openwebserver.core.Security.CORS.Policy;
 import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Sessions.SessionManager;
@@ -43,7 +43,7 @@ public class RequestHandler extends Route implements RouteRegister{
         if (!super.hasRequired(request)) {
             throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
         }
-        if(needsAuthentication() && !getAuthorizor().authorize(request)){
+        if(needsAuthentication() && !getAuthorizer().authorize(request)){
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
         try {
@@ -119,15 +119,15 @@ public class RequestHandler extends Route implements RouteRegister{
     //endregion
 
     //region Authentication
-    private Authorizor authorizor;
-    public void setAuthorizor(Authorizor authorizor){
+    private Authorizer<?> authorizer;
+    public void setAuthorizer(Authorizer<?> authorizer){
         if(needsAuthentication()) {
-            this.authorizor = authorizor;
+            this.authorizer = authorizer;
         }
     }
 
-    protected Authorizor getAuthorizor() {
-        return authorizor;
+    protected Authorizer<?> getAuthorizer() {
+        return authorizer;
     }
     //endregion
 

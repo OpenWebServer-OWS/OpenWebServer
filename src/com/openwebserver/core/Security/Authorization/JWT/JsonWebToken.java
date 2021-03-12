@@ -1,7 +1,7 @@
 package com.openwebserver.core.Security.Authorization.JWT;
 
 import com.openwebserver.core.Objects.Request;
-import com.openwebserver.core.Security.Authorization.Authorizor;
+import com.openwebserver.core.Security.Authorization.Authorizer;
 import org.json.JSONObject;
 
 import javax.crypto.Mac;
@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 
 import static java.nio.charset.StandardCharsets.*;
 
-public class JsonWebToken implements Authorizor<JsonWebToken> {
+public class JsonWebToken implements Authorizer<JsonWebToken> {
 
     public final JSONObject HEADER = new JSONObject();
     public final JSONObject PAYLOAD = new JSONObject();
@@ -99,7 +99,7 @@ public class JsonWebToken implements Authorizor<JsonWebToken> {
         return validator;
     }
 
-    public static Authorizor<JsonWebToken> validate(BiFunction<Request, JsonWebToken, Boolean> validator){
+    public static Authorizer<JsonWebToken> validate(BiFunction<Request, JsonWebToken, Boolean> validator){
         JsonWebToken authorizor = new JsonWebToken();
         authorizor.setValidator(validator);
         return authorizor;

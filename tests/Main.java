@@ -5,9 +5,12 @@ import com.openwebserver.core.WebServer;
 public class Main {
 
     public static void main(String[] args) {
+
+        SessionTest test = new SessionTest("/");
+
         new WebServer().addDomain(
                 new Domain()
-                    .addHandler(new SessionTest("/"))
+                    .addHandler(test)
         ).start();
         Router.print();
     }

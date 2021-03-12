@@ -9,7 +9,7 @@ public class Service extends com.openwebserver.services.Objects.Service {
 
     public Service(String path) {
         super(path);
-        setAuthorizor(JsonWebToken.validate(((request, jsonWebToken) -> true)));
+        setAuthorizer(JsonWebToken.validate(((request, jsonWebToken) -> true)));
     }
 
     @Authorize
