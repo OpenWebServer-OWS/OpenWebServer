@@ -22,28 +22,22 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     }
 
     public void print() {
-        values().forEach(handler ->{
-            try {
-                System.out.println("\t" + handler.getMethod().toString() + ":" +  getDomain().getUrl().toString()+handler.getPath());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            if(handler.getRequired().length >0){
-                System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
-            }
-            if(handler.getPolicyName() != null) {
-                System.out.println("\t\tPOLICY:" + handler.getPolicy());
-            }
-            if(handler.getSessionSpecification() != null) {
-                System.out.println("\t\tSESSION:" +  "{" +
-                        "required=" + Arrays.toString(handler.getSessionSpecification().require()) +
-                        ", redirect=" + handler.getSessionSpecification().redirect() +
-                        '}');
-            }
-            if(handler.needsAuthentication()) {
-                System.out.println("\t\tAUTHENTICATION: REQUIRED");
-            }
-        });
+        values().forEach(Routes::Print);
+    }
+
+    public static void Print(RequestHandler handler){
+        try {
+            System.out.println("\t" + handler.getMethod().toString() + ":" +  handler.getDomain().getUrl().toString()+handler.getPath());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
+        if(handler.getPolicyName() != null) {
+            System.out.println("\t\tPOLICY:" + handler.getPolicy());
+        }
+        if(handler.needsAuthentication()) {
+            System.out.println("\t\tAUTHENTICATION: REQUIRED");
+        }
     }
 
     public Domain getDomain() {
@@ -67,6 +61,7 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     }
 
     public Routes add(RequestHandler handler){
+        handler.setDomain(route.getDomain());
         put(handler.getMethod(), handler);
         return this;
     }
@@ -77,13 +72,16 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
             handler = get(request.getMethod());
         }else if(containsKey(Route.Method.UNDEFINED)){
             handler = get(Route.Method.UNDEFINED);
-            return get(Route.Method.UNDEFINED).handle(request);
         }
         if(handler != null){
-            try {
-                return handler.handle(request).addHeaders(handler.getHeaders());
-            }catch (WebException e){
-                throw e.addHeaders(handler.getHeaders());
+            if(handler.isEnabled()) {
+                try {
+                    return handler.handle(request).addHeaders(handler.getHeaders());
+                } catch (WebException e) {
+                    throw e.addHeaders(handler.getHeaders());
+                }
+            }else{
+                return Response.simple(Code.Disabled, "Route disabled on path '"+handler.getPath()+"' with method '"+handler.getMethod()+"'");
             }
         }
         else{
