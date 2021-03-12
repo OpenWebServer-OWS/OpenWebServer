@@ -22,32 +22,39 @@
             <systemPath>${project.basedir}/src/main/resources/ByteReader.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.FileManager</groupId>
+            <groupId>FileManager</groupId>
             <artifactId>FileManager</artifactId>
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/FileManager.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.json</groupId>
+            <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/json-20190722.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.pair</groupId>
-            <artifactId>pair</artifactId>
+            <groupId>Pair</groupId>
+            <artifactId>Pair</artifactId>
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/Pair.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.reflection</groupId>
-            <artifactId>reflection</artifactId>
+            <groupId>Reflection</groupId>
+            <artifactId>Reflection</artifactId>
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/Reflection.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>ByteReader</groupId>
+            <artifactId>ByteReader</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/ByteReader.jar</systemPath>
         </dependency>
     </dependencies>
     
