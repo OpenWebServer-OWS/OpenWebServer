@@ -52,6 +52,7 @@ public class RequestHandler extends Route implements RouteRegister{
             if(sessionSpecification != null && !sessionSpecification.redirect().equals("")){
                 return Response.simple(Code.Temporary_Redirect).addHeader(new Header("Location", sessionSpecification.redirect()));
             }
+            throw e;
         }
         return contentHandler.respond(request);
     }
