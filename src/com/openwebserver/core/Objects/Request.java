@@ -3,7 +3,6 @@ package com.openwebserver.core.Objects;
 import ByteReader.ByteReader;
 import FileManager.Local;
 import Pair.Pair;
-import com.dbrocker.constructor.Constructor;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Connection.ConnectionManager;
 import com.openwebserver.core.Content.Code;
@@ -86,16 +85,8 @@ public class Request{
         return POST;
     }
 
-    public <T> T POST(String key, Class<T> type) throws WebException{
-        try {
-            return (T) POST.get(key);
-        }catch (ClassCastException e){
-            try {
-                return Constructor.Parse(type, POST(key));
-            } catch (Constructor.ConstructionException ex) {
-                throw new WebException(ex);
-            }
-        }
+    public <T> T POST(String key, Class<T> type){
+        return (T) POST.get(key);
     }
 
     public Object POST(String key){
