@@ -1,4 +1,6 @@
-/out/
-/test/
-.idea
-/public/
+/out
+/test
+/.idea
+/public
+*.iml
+*.xml
