@@ -1,6 +1,5 @@
 package com.openwebserver.core.Handlers;
 
-
 import com.openwebserver.core.Annotations.Session;
 import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Objects.Headers.Header;
@@ -139,7 +138,4 @@ public class RequestHandler extends Route implements RouteRegister{
             routeConsumer.accept(CORS_handler);
         }
     }
-
-
-
 }
