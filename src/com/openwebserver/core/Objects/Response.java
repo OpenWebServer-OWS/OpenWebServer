@@ -61,10 +61,10 @@ public class Response implements Content {
 
                             @Override
                             public Type getType() {
-                                if(l.getFilter().getExtension().equals(".js")){
+                                if(l.getExtension().equals(".js")){
                                     return Type.Application.edit("javascript");
                                 }
-                                return Type.wrap(l.getFilter().getMIME());
+                                return Type.wrap(l.getMIME());
                             }
 
                             @Override
