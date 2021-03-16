@@ -16,7 +16,6 @@ import java.util.Objects;
 
 public class WebServer{
 
-    private final String name;
     public static Header serverHeader;
     public static Folder tempFolder;
 
@@ -33,7 +32,6 @@ public class WebServer{
     private boolean closed = false;
 
     public WebServer(String name) {
-        this.name = name;
         serverHeader = new Header("Server", name);
     }
 
