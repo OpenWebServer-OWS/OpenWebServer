@@ -4,5 +4,5 @@
 /public
 *.iml
 *.xml
-*.iml
 /META-INF
+*.MF
