@@ -1,7 +1,7 @@
 package com.openwebserver.core.Objects.Headers;
 
-import Pair.Pair;
 
+import com.together.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -2,7 +2,6 @@ package com.openwebserver.core.Objects;
 
 import ByteReader.ByteReader;
 import FileManager.Local;
-import Pair.Pair;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Connection.ConnectionManager;
 import com.openwebserver.core.Content.Code;
@@ -15,6 +14,7 @@ import com.openwebserver.core.Routing.Router;
 import com.openwebserver.core.Sessions.Session;
 import com.openwebserver.core.WebException;
 import com.openwebserver.core.WebServer;
+import com.together.Pair;
 import org.json.JSONObject;
 
 import java.io.IOException;
