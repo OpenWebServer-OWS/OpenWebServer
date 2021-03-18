@@ -87,7 +87,7 @@ public class Main {
 }
 ```
 
-### Multi HTTPS domain https://example.com,https://example.com
+### Multi HTTPS domain https://example.com, https://example.nl
 
 ```java
 import com.openwebserver.core.Content.Code;
