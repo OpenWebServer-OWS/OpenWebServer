@@ -80,7 +80,7 @@ public class Main {
                                         new Route("/", Route.Method.GET),
                                         request -> Response.simple(Code.Ok))
                         )
-                .setCertificates(new Certificate<>("cert1.pem"), new Certificate<>("privkey1.pem")) \\<-- add certificates
+                .setCertificates(new Certificate<>("[PATH 'cert1.pem']"), new Certificate<>("[PATH 'privkey1.pem']")) \\<-- add certificates
         ).start();
     }
 
