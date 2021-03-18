@@ -46,7 +46,7 @@ public class Main {
 
     public static void main(String[] args) throws MalformedURLException {
         new WebServer().addDomain(
-                new Domain("http://example.com") \\<-- Domain name
+                new Domain("http://example.com") /* <-- DOMAIN NAME WITH PROTOCOL */
                         .addHandler(
                                 new RequestHandler(
                                         new Route("/", Route.Method.GET),
@@ -74,13 +74,53 @@ public class Main {
 
     public static void main(String[] args) throws MalformedURLException {
         new WebServer().addDomain(
-                new Domain("https://example.com") \\<-- Domain name
+                new Domain("https://example.com") /* <-- DOMAIN NAME WITH PROTOCOL */
                         .addHandler(
                                 new RequestHandler(
                                         new Route("/", Route.Method.GET),
                                         request -> Response.simple(Code.Ok))
                         )
-                .setCertificates(new Certificate<>("[PATH 'cert1.pem']"), new Certificate<>("[PATH 'privkey1.pem']")) \\<-- add certificates
+                .setCertificates(new Certificate<>("[PATH 'cert1.pem']"), new Certificate<>("[PATH 'privkey1.pem']"))  /* <-- CERTIFICATE FILES */
+        ).start();
+    }
+
+}
+```
+
+### Multi HTTPS domain https://example.com,https://example.com
+
+```java
+import com.openwebserver.core.Content.Code;
+import com.openwebserver.core.Domain;
+import com.openwebserver.core.Handlers.RequestHandler;
+import com.openwebserver.core.Objects.Response;
+import com.openwebserver.core.Routing.Route;
+import com.openwebserver.core.Security.SSL.Certificate;
+import com.openwebserver.core.WebServer;
+
+import java.net.MalformedURLException;
+
+public class Main {
+
+    public static void main(String[] args) throws MalformedURLException {
+        new WebServer().addDomain(
+                //DOMAIN 1
+                new Domain("https://example.com") /* <-- DOMAIN NAME WITH PROTOCOL */
+                .addHandler(
+                        new RequestHandler(
+                                new Route("/", Route.Method.GET),
+                                request -> Response.simple(Code.Ok))
+                )
+                .setCertificates(new Certificate<>("[PATH 'cert1.pem']"), new Certificate<>("[PATH 'privkey1.pem']")), /* <-- CERTIFICATE FILES */
+
+                //DOMAIN 2
+                new Domain("https://example.nl") /* <-- DOMAIN NAME WITH PROTOCOL */
+                .addHandler(
+                        new RequestHandler(
+                                new Route("/", Route.Method.GET),
+                                request -> Response.simple(Code.Ok))
+                )
+                .setCertificates(new Certificate<>("[PATH 'cert1.pem']"), new Certificate<>("[PATH 'privkey1.pem']"))  /* <-- CERTIFICATE FILES */
         ).start();
     }
 
