@@ -93,8 +93,8 @@ public class Response implements Content {
             else if (o instanceof Map) {
                 return simple(code, JSONObject.wrap(o), type);
             }
-            else if (o instanceof Collection) {
-                return simple(code, new JSONArray().put(o), type);
+            else if (o instanceof Collection || o.getClass().isArray()) {
+                return simple(code, new JSONArray(o), type);
             }
             else if (o instanceof Throwable) {
                 return new WebException((Throwable) o).respond();
