@@ -43,7 +43,7 @@ public class Request{
     private RequestHandler handler;
 
     private Request(Headers headers){
-        this.path = headers.getPath();
+        this.path = URLDecoder.decode(headers.getPath(),Charset.defaultCharset());
         this.method = Route.Method.valueOf(headers.getMethod());
         this.headers = headers;
         this.domain = Router.getDomain(getAlias());
