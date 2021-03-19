@@ -138,4 +138,8 @@ public class RequestHandler extends Route implements RouteRegister{
             routeConsumer.accept(CORS_handler);
         }
     }
+
+    public static RequestHandler inline(String path, Method method, ContentHandler handler){
+        return new RequestHandler(new Route(path, method), handler);
+    }
 }
