@@ -1,6 +1,7 @@
 package com.openwebserver.core.Routing;
 
 
+import com.openwebserver.core.Annotations.Session;
 import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Domain;
 import com.openwebserver.core.Handlers.RequestHandler;
@@ -31,9 +32,19 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
+        if(handler.getRequired().length > 0) {
+            System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
+        }
         if(handler.getPolicyName() != null) {
             System.out.println("\t\tPOLICY:" + handler.getPolicy());
+        }
+        if(handler.getSessionSpecification() != null) {
+            Session s = handler.getSessionSpecification();
+            System.out.println("\t\tSESSION:{" +
+                    "required=" + Arrays.toString(s.require()) +
+                    ", redirect=" + (!s.redirect().equals("")? s.redirect(): "undefined") +
+                    "}"
+            );
         }
         if(handler.needsAuthentication()) {
             System.out.println("\t\tAUTHENTICATION: REQUIRED");

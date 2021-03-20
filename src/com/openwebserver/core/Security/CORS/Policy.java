@@ -91,7 +91,7 @@ public class Policy{
 
     @Override
     public String toString() {
-        return "Policy{" +
+        return "{" +
                 "name='" + name + '\'' +
                 ", allowedOrigins=" + allowedOrigins +
                 ", allowedHeaders=" + allowedHeaders +
