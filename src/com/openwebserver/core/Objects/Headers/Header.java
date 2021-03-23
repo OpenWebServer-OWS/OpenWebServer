@@ -89,9 +89,9 @@ public class Header extends Pair<String, String> {
             return Header.raw(encoded);
         }
         Header h = new Header();
-        int first = encoded.indexOf(":");
+        int first = encoded.indexOf(KeyValueSeparator);
         h.setKey(encoded.substring(0, first));
-        h.setValue(encoded.substring(first));
+        h.setValue(encoded.substring(first + 1).trim());
         h.setValue(Attribute.Decode(h.getValue(), h.attributes::add));
         return h;
     }
