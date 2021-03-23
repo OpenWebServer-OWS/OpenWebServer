@@ -45,7 +45,7 @@ public class Router {
                 Request request = Request.deserialize(self);
                 self.write(Router.find(request, self).handle(request));
             } catch (PrematureStreamException e) {
-                  self.close();
+                self.close();
             } catch (WebException e) {
                 self.write(e.respond());
             } catch (Throwable throwable) {

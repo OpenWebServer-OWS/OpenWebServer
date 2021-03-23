@@ -8,6 +8,7 @@ import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
 import com.openwebserver.core.Security.Authorization.Authorizer;
+import com.openwebserver.core.Security.CORS.CORS;
 import com.openwebserver.core.Security.CORS.Policy;
 import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Sessions.SessionManager;
@@ -19,8 +20,7 @@ import java.util.function.Consumer;
 public class RequestHandler extends Route implements RouteRegister{
 
     private ContentHandler contentHandler;
-    private SessionHandler sessionHandler = (annotation, session) -> session.hasRequired(annotation.require());
-    private Session sessionSpecification;
+
     private final Headers headers = new Headers();
 
     public RequestHandler(Route notation, ContentHandler contentHandler) {
@@ -45,6 +45,7 @@ public class RequestHandler extends Route implements RouteRegister{
         if(needsAuthentication() && !getAuthorizer().authorize(request)){
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
+        handleCORS(request);
         try {
             SessionManager.bind(sessionSpecification, request);
         }catch (com.openwebserver.core.Sessions.Session.SessionException e){
@@ -69,6 +70,9 @@ public class RequestHandler extends Route implements RouteRegister{
     }
 
     //region sessions
+    private SessionHandler sessionHandler = (annotation, session) -> session.hasRequired(annotation.require());
+    private Session sessionSpecification;
+
     public void setSessionHandler(SessionHandler handler){
         this.sessionHandler = handler;
     }
@@ -87,21 +91,42 @@ public class RequestHandler extends Route implements RouteRegister{
     //endregion
 
     //region CORS
+    public void handleCORS(Request request){
+        if(overrideOrigin){
+            request.headers.tryGet("Host", header -> {
+                this.headers.replace("Access-Control-Allow-Origin", header.getValue());
+            });
+        }
+    }
+
     private Policy policy;
+    private boolean overrideOrigin = false;
     private RequestHandler CORS_handler;
 
-    public void setCORSPolicy(String policyName) {
-        if(policyName == null){
+    public void setCORSPolicy(CORS policy) {
+        if(policy != null) {
+            setCORSPolicy(policy.value(), policy.overrideOrigin());
+        }
+    }
+    public void setCORSPolicy(String policy) {
+        setCORSPolicy(policy, false);
+    }
+
+    public void setCORSPolicy(String policy, boolean overrideOrigin) {
+        if(policy == null){
             return;
         }
         try {
-            this.policy = PolicyManager.getPolicy(policyName);
+            this.policy = PolicyManager.getPolicy(policy);
+            this.headers.addAll(this.policy.pack());
+            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(this.policy.pack()));
+            this.overrideOrigin = overrideOrigin;
         } catch (PolicyManager.PolicyException.NotFound notFound) {
             notFound.printStackTrace();
-        }
-        if(policy != null){
-            headers.addAll(policy.pack());
-            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(policy.pack()));
+        } catch (PolicyManager.PolicyException e) {
+            if(!overrideOrigin){
+               e.printStackTrace();
+            }
         }
     }
 

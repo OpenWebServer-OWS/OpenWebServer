@@ -40,6 +40,14 @@ public class Headers extends ArrayList<Header> implements ConnectionContent {
         return null;
     }
 
+    public int IndexOf(Header header){
+        return indexOf(header);
+    }
+
+    public void replace(String key, String value){
+        get(key).setValue(value);
+    }
+
     public Header get(String key) {
         return get(key, false);
     }

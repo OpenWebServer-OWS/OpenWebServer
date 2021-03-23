@@ -42,7 +42,7 @@ public class Service extends RequestHandler {
                 });
                 requestHandler.setSessionSpecification(method.isAnnotationPresent(Session.class)? method.getAnnotation(Session.class): null);
                 requestHandler.setSessionHandler(this.getSessionHandler());
-                requestHandler.setCORSPolicy(method.isAnnotationPresent(CORS.class)? method.getAnnotation(CORS.class).value(): null);
+                requestHandler.setCORSPolicy(method.isAnnotationPresent(CORS.class)? method.getAnnotation(CORS.class): null);
                 requestHandler.setNeedsAuthentication(method.isAnnotationPresent(Authorize.class));
                 requestHandler.addPrefix(this);
                 routes.add(requestHandler);

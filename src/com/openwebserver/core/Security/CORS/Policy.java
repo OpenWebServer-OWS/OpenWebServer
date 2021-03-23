@@ -12,7 +12,7 @@ import java.util.function.Function;
 public class Policy{
 
     private final String name;
-    private final ArrayList<String> allowedOrigins = new ArrayList<>();
+    private String allowedOrigin = null;
     private final ArrayList<String> allowedHeaders = new ArrayList<>();
     private final ArrayList<Route.Method> allowedMethods = new ArrayList<>();
     private final Headers headers = new Headers();
@@ -25,8 +25,8 @@ public class Policy{
         return name;
     }
 
-    public Policy addOrigin(String ... origins){
-        allowedOrigins.addAll(Arrays.asList(origins));
+    public Policy setOrigin(String origin){
+        this.allowedOrigin = origin;
         return this;
     }
 
@@ -50,7 +50,7 @@ public class Policy{
     }
 
     public Policy AllowAnyOrgin(){
-        allowedOrigins.add("*");
+        allowedOrigin = "*";
         return this;
     }
 
@@ -59,10 +59,13 @@ public class Policy{
         return this;
     }
 
-    public Headers pack(){
+    public Headers pack() throws PolicyManager.PolicyException {
+        if(allowedOrigin == null){
+            throw new PolicyManager.PolicyException("Origin not found for policy '"+name+"'");
+        }
         Headers headers = new Headers();
         headers.addAll(this.headers);
-        headers.add(new Header("Access-Control-Allow-Origin", between(allowedOrigins)));
+        headers.add(new Header("Access-Control-Allow-Origin", allowedOrigin));
         headers.add(new Header("Access-Control-Allow-Methods", between(allowedMethods, method -> {
             if(method.equals(Route.Method.UNDEFINED)){
                 return "*";
@@ -93,7 +96,7 @@ public class Policy{
     public String toString() {
         return "{" +
                 "name='" + name + '\'' +
-                ", allowedOrigins=" + allowedOrigins +
+                ", allowedOrigin=" + allowedOrigin +
                 ", allowedHeaders=" + allowedHeaders +
                 ", allowedMethods=" + allowedMethods +
                 ", headers=" + headers +

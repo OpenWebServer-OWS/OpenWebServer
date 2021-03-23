@@ -13,4 +13,5 @@ public @interface CORS {
      * @return Policy name
      */
     String value();
+    boolean overrideOrigin() default false;
 }
