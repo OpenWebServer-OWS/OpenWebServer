@@ -93,7 +93,7 @@ public class RequestHandler extends Route implements RouteRegister{
     //region CORS
     public void handleCORS(Request request){
         if(overrideOrigin){
-            request.headers.tryGet("Host", header -> {
+            request.headers.tryGet("Origin", header -> {
                 this.headers.replace("Access-Control-Allow-Origin", header.getValue());
             });
         }
