@@ -77,6 +77,14 @@ public class Request{
         return GET;
     }
 
+    public HashMap<String, Pair<String, Local>> FILES() {
+        return FILES;
+    }
+
+    public Local FILES(String key) {
+        return FILES.get(key).getValue();
+    }
+
     public String GET(String key) {
         return GET.get(key);
     }
