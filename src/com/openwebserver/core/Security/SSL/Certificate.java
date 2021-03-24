@@ -38,6 +38,7 @@ public class Certificate<T>{
             return this.key;
         } catch (IOException | CertificateException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
+            System.exit(-1);
         }
         return null;
     }
