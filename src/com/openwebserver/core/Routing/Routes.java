@@ -97,7 +97,6 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
             throw new WebException(Code.Method_Not_Allowed, "Method not allowed on '"+getPath()+"'").addRequest(request);
         }
     }
-
     @Override
     public String toString() {
         return String.valueOf(getPath());
