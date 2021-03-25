@@ -4,6 +4,7 @@ package com.openwebserver.core.Routing;
 import com.openwebserver.core.Domain;
 import com.openwebserver.core.Objects.Request;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -118,6 +119,14 @@ public class Route {
 
     public Domain getDomain() {
         return domain;
+    }
+
+    public void print(){
+        try {
+            System.out.println("\tROUTE:"+ getDomain().getUrl().toString()+getPath());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static class RESTDecoder {

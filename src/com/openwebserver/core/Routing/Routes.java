@@ -12,6 +12,7 @@ import com.openwebserver.core.WebException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Handler;
 
 public class Routes extends HashMap<Route.Method, RequestHandler>{
 
@@ -23,31 +24,28 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     }
 
     public void print() {
+        route.print();
         values().forEach(Routes::Print);
     }
 
     public static void Print(RequestHandler handler){
-        try {
-            System.out.println("\t" + handler.getMethod().toString() + ":" +  handler.getDomain().getUrl().toString()+handler.getPath());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        System.out.println("\t\t[" + handler.getMethod().toString() + "]");
         if(handler.getRequired().length > 0) {
-            System.out.println("\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
+            System.out.println("\t\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
         }
         if(handler.getPolicyName() != null) {
-            System.out.println("\t\tPOLICY:" + handler.getPolicy());
+            System.out.println("\t\t\tPOLICY:" + handler.getPolicy());
         }
         if(handler.getSessionSpecification() != null) {
             Session s = handler.getSessionSpecification();
-            System.out.println("\t\tSESSION:{" +
+            System.out.println("\t\t\tSESSION:{" +
                     "required=" + Arrays.toString(s.require()) +
                     ", redirect=" + (!s.redirect().equals("")? s.redirect(): "undefined") +
                     "}"
             );
         }
         if(handler.needsAuthentication()) {
-            System.out.println("\t\tAUTHENTICATION: REQUIRED");
+            System.out.println("\t\t\tAUTHENTICATION: REQUIRED");
         }
     }
 
