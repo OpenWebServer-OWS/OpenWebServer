@@ -51,7 +51,7 @@ public class Request{
     }
 
     public String getAlias() {
-        return headers.get("Host").getValue();
+        return headers.get("Host").getValue().split(":")[0];
     }
 
     public static Request deserialize(Connection connection) throws ByteReader.ByteReaderException.PrematureStreamException, RequestException {
