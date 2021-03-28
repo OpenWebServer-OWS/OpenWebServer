@@ -58,7 +58,7 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     }
 
     public boolean matches(Request request){
-        if(route.getPath().equals("#")){
+        if(route.getPath().endsWith("#")){
             return true;
         }
         if (Route.RESTDecoder.containsRegex(getPath())) {
