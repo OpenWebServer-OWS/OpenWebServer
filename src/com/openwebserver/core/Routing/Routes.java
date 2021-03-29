@@ -9,10 +9,8 @@ import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.WebException;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Handler;
 
 public class Routes extends HashMap<Route.Method, RequestHandler>{
 
@@ -58,7 +56,7 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     }
 
     public boolean matches(Request request){
-        if(route.getPath().endsWith("#")){
+        if(route.getPath().endsWith("#") && request.getPath(true).startsWith(route.getPath().replace("#", ""))){
             return true;
         }
         if (Route.RESTDecoder.containsRegex(getPath())) {

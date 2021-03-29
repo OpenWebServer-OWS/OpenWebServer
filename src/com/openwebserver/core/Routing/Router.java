@@ -11,6 +11,7 @@ import com.openwebserver.core.WebException;
 import com.tree.TreeArrayList;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Router {
@@ -37,6 +38,10 @@ public class Router {
         if(routes == null){
             getInstance().routes.addOn(domain,new Routes(handler.getPath(), domain).add(handler));
         }
+    }
+
+    public static ArrayList<Routes> getRoutes(Domain domain){
+        return getInstance().routes.get(domain);
     }
 
     public static void handle(Connection connection){

@@ -7,6 +7,7 @@ import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
+import com.openwebserver.core.Security.Authorization.Authorize;
 import com.openwebserver.core.Security.Authorization.Authorizer;
 import com.openwebserver.core.Security.CORS.CORS;
 import com.openwebserver.core.Security.CORS.Policy;
@@ -14,6 +15,7 @@ import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Sessions.SessionManager;
 import com.openwebserver.core.WebException;
 
+import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 
@@ -22,6 +24,12 @@ public class RequestHandler extends Route implements RouteRegister{
     private ContentHandler contentHandler;
 
     private final Headers headers = new Headers();
+    private java.lang.reflect.Method reflection;
+    private Consumer<RequestHandler> registerListener;
+
+    public void setOnRegisterListener(Consumer<RequestHandler> listener){
+        this.registerListener = listener;
+    }
 
     public RequestHandler(Route notation, ContentHandler contentHandler) {
         this(notation,contentHandler,null);
@@ -156,11 +164,25 @@ public class RequestHandler extends Route implements RouteRegister{
     }
     //endregion
 
+    public void setReflection(java.lang.reflect.Method method){
+        setSessionSpecification(method.isAnnotationPresent(Session.class)? method.getAnnotation(Session.class): null);
+        setCORSPolicy(method.isAnnotationPresent(CORS.class)? method.getAnnotation(CORS.class): null);
+        setNeedsAuthentication(method.isAnnotationPresent(Authorize.class));
+        this.reflection = method;
+    }
+
+    public java.lang.reflect.Method getReflection() {
+        return reflection;
+    }
+
     @Override
     public void register(Consumer<RequestHandler> routeConsumer) {
         routeConsumer.accept(this);
         if(CORS_handler != null){
             routeConsumer.accept(CORS_handler);
+        }
+        if(registerListener != null){
+            registerListener.accept(this);
         }
     }
 
