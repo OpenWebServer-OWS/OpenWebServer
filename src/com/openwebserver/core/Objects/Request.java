@@ -162,6 +162,11 @@ public class Request{
             case "application/json": {
                 POST = (HashMap<String, Object>) new JSONObject(new String(data, Charset.defaultCharset())).toMap();
             }
+            default:{
+                HashMap<String, Object> post = new HashMap<>();
+                post.put("plain", new String(data, Charset.defaultCharset()));
+                POST = post;
+            }
         }
     }
 
