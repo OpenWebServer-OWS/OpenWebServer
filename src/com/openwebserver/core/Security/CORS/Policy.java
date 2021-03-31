@@ -59,6 +59,18 @@ public class Policy{
         return this;
     }
 
+    public ArrayList<Route.Method> getAllowedMethods() {
+        return allowedMethods;
+    }
+
+    public ArrayList<String> getAllowedHeaders() {
+        return allowedHeaders;
+    }
+
+    public String getAllowedOrigin() {
+        return allowedOrigin;
+    }
+
     public Headers pack() throws PolicyManager.PolicyException {
         if(allowedOrigin == null){
             throw new PolicyManager.PolicyException("Origin not found for policy '"+name+"'");

@@ -123,6 +123,10 @@ public class Response implements Content {
         }
     }
 
+    public static Response simple(){
+        return Response.simple(Code.Ok);
+    }
+
     //region response methods
 
     @Override

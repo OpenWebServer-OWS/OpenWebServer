@@ -127,7 +127,15 @@ public class RequestHandler extends Route implements RouteRegister{
         try {
             this.policy = PolicyManager.getPolicy(policy);
             this.headers.addAll(this.policy.pack());
-            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> Response.simple(Code.No_Content).addHeaders(this.policy.pack()));
+            CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> {
+                Headers headers = this.policy.pack();
+                if(overrideOrigin){
+                    request.headers.tryGet("Origin", header -> {
+                        headers.replace("Access-Control-Allow-Origin", header.getValue());
+                    });
+                }
+                return Response.simple(Code.No_Content).addHeaders(headers);
+            });
             this.overrideOrigin = overrideOrigin;
         } catch (PolicyManager.PolicyException.NotFound notFound) {
             notFound.printStackTrace();

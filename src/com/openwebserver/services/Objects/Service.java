@@ -88,7 +88,7 @@ public class Service extends RequestHandler implements Consumer<RequestHandler> 
         routes.forEach(handler -> handler.addPrefix(prefix));
     }
 
-    public static <T> T getService(Class<T> serviceClass) throws ServiceManager.ServiceManagerException {
+    public static <T extends Service> T getService(Class<T> serviceClass) throws ServiceManager.ServiceManagerException {
         return ServiceManager.getService(serviceClass);
     }
 
