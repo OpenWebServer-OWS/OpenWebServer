@@ -1,3 +1,6 @@
+
+![OWS Logo](https://avatars.githubusercontent.com/u/79221236?s=200&v=4 "OpenWebServer")
+
 # OpenWebServer
 
 Java Multi domain HTTPS and HTTP WebServer
