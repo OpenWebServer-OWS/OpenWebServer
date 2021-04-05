@@ -161,11 +161,13 @@ public class Request{
             }
             case "application/json": {
                 POST = (HashMap<String, Object>) new JSONObject(new String(data, Charset.defaultCharset())).toMap();
+                break;
             }
             default:{
                 HashMap<String, Object> post = new HashMap<>();
-                post.put("plain", new String(data, Charset.defaultCharset()));
+                post.put("$plain", new String(data, Charset.defaultCharset()));
                 POST = post;
+                break;
             }
         }
     }

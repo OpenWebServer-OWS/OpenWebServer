@@ -47,18 +47,18 @@ public class RequestHandler extends Route implements RouteRegister{
 
     public Response handle(Request request) throws Throwable {
         request.setHandler(this);
+        handleCORS(request);
         if (!super.hasRequired(request)) {
             throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
         }
         if(needsAuthentication() && !getAuthorizer().authorize(request)){
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
-        handleCORS(request);
         try {
             SessionManager.bind(sessionSpecification, request);
         }catch (com.openwebserver.core.Sessions.Session.SessionException e){
             if(sessionSpecification != null && !sessionSpecification.redirect().equals("")){
-                return Response.simple(Code.Temporary_Redirect).addHeader(new Header("Location", sessionSpecification.redirect()));
+                return Response.simple(Code.Temporary_Redirect).addHeader(new Header("Location", sessionSpecification.redirect())).addHeaders(this.headers);
             }
             throw e;
         }
