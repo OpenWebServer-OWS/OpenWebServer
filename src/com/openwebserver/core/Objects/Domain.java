@@ -4,7 +4,6 @@ package com.openwebserver.core.Objects;
 import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Routing.Router;
 import com.openwebserver.core.Security.SSL.Certificate;
-import com.openwebserver.core.Security.SecurityManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,8 +26,8 @@ public class Domain {
         } else {
             this.port = port;
         }
+
         this.secure = secure;
-        SecurityManager.registerHost(getAlias());
     }
 
     public Domain(String alias, boolean secure) {
@@ -37,7 +36,6 @@ public class Domain {
 
     public Domain(String url) throws MalformedURLException {
         this(new URL(url).getHost(), new URL(url).getPort(), new URL(url).getProtocol().equals("https"));
-
     }
 
     public Domain() {

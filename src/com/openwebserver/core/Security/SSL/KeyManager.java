@@ -1,6 +1,7 @@
 package com.openwebserver.core.Security.SSL;
 
 import FileManager.Local;
+import Reflection.ObjectEditor.ObjectEditor;
 import com.openwebserver.core.Objects.Domain;
 
 import javax.net.ssl.*;
@@ -11,6 +12,9 @@ import java.nio.charset.Charset;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 public class KeyManager implements X509KeyManager {
@@ -63,9 +67,11 @@ public class KeyManager implements X509KeyManager {
             SSLContext context = SSLContext.getInstance("SSL");
             context.init(new X509KeyManager[]{manager}, null, null);
             return context;
-        } catch (Throwable e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw KeyManagerException.wrap(e);
         }
+
+
     }
 
     public static ServerSocket createServerSocket(int port) throws KeyManagerException {
@@ -94,11 +100,16 @@ public class KeyManager implements X509KeyManager {
 
     @Override
     public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
+        String alias = null;
         if (socket instanceof SSLSocket) {
-            ExtendedSSLSession session = ((ExtendedSSLSession)((SSLSocket)socket).getHandshakeSession());
-            return new String(session.getRequestedServerNames().get(0).getEncoded(), Charset.defaultCharset());
+            try {
+                List<SNIServerName> list = (List<SNIServerName>) ObjectEditor.value(((SSLSocket) socket).getHandshakeSession(), "requestedServerNames"); //TODO find replacement for reflection field access
+                return new String(list.get(0).getEncoded(), Charset.defaultCharset());
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return alias;
     }
 
     @Override
