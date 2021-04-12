@@ -1,15 +1,11 @@
 package com.openwebserver.services.Objects;
 
 
-import com.openwebserver.core.Annotations.Session;
 import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Domain;
 import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
-import com.openwebserver.core.Security.Authorization.Authorize;
 import com.openwebserver.core.Security.Authorization.Authorizer;
-import com.openwebserver.core.Security.CORS.CORS;
 import com.openwebserver.core.WebException;
 import com.openwebserver.services.ServiceManager;
 
@@ -57,6 +53,16 @@ public class Service extends RequestHandler implements Consumer<RequestHandler> 
         return name;
     }
 
+    public void add(RequestHandler requestHandler){
+        requestHandler.addPrefix(this);
+        requestHandler.register(routes::add);
+    }
+
+    public static <T extends Service> T getService(Class<T> serviceClass) throws ServiceManager.ServiceManagerException {
+        return ServiceManager.getService(serviceClass);
+    }
+
+
     @Override
     public void register(Consumer<RequestHandler> routeConsumer) {
         routes.forEach(handler -> {
@@ -65,16 +71,11 @@ public class Service extends RequestHandler implements Consumer<RequestHandler> 
     }
 
     @Override
-    public void setAuthorizer(Authorizer authorizer) {
+    public void setAuthorizer(Authorizer<?> authorizer) {
         super.setAuthorizer(authorizer);
         routes.forEach(handler -> {
             handler.setAuthorizer(authorizer);
         });
-    }
-
-    public void add(RequestHandler requestHandler){
-        requestHandler.addPrefix(this);
-        requestHandler.register(routes::add);
     }
 
     @Override
@@ -88,28 +89,8 @@ public class Service extends RequestHandler implements Consumer<RequestHandler> 
         routes.forEach(handler -> handler.addPrefix(prefix));
     }
 
-    public static <T extends Service> T getService(Class<T> serviceClass) throws ServiceManager.ServiceManagerException {
-        return ServiceManager.getService(serviceClass);
-    }
-
     @Override
     public void accept(RequestHandler handler) {
         handler.setDomain(this.getDomain());
     }
-
-    public static class ServiceException extends WebException{
-
-        public ServiceException(String message) {
-            super(Code.Service_Unavailable, message);
-        }
-
-        public static class NotFoundException extends ServiceException{
-
-            public NotFoundException() {
-                super("Service not found");
-            }
-        }
-
-    }
-
 }

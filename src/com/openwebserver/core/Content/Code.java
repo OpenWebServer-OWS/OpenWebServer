@@ -342,10 +342,12 @@ public enum Code {
      * The 511 status code indicates that the client needs to authenticate to gain network access.
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/511>https://developer.mozilla.org</a>
      */
-    Network_Authentication_Required(511, "Network Authentication Required");
+    Network_Authentication_Required(511, "Network Authentication Required"),
 
-    private final int code;
-    private final String description;
+    Custom(-1, "Unknown");
+
+    private int code;
+    private String description;
 
     Code(int code, String description) {
         this.code = code;
@@ -359,6 +361,21 @@ public enum Code {
             }
         }
         return Internal_Server_Error;
+    }
+
+
+    public static Code Custom(int code, String description){
+        return Custom.edit(code,description);
+    }
+
+    public static Code Custom(int code){
+        return Custom.edit(code, "Not provided");
+    }
+
+    public Code edit(int code, String description){
+        this.code = code;
+        this.description = description;
+        return this;
     }
 
     public int getCode() {

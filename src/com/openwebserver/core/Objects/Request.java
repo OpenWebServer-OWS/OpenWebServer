@@ -1,17 +1,16 @@
 package com.openwebserver.core.Objects;
 
-import ByteReader.ByteReader;
 import FileManager.Local;
+import com.bytereader.ByteReader;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Connection.ConnectionManager;
 import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Domain;
 import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.Routing.Route;
 import com.openwebserver.core.Routing.Router;
-import com.openwebserver.core.Sessions.Session;
+import com.openwebserver.core.Security.Sessions.Session;
 import com.openwebserver.core.WebException;
 import com.openwebserver.core.WebServer;
 import com.together.Pair;
@@ -144,7 +143,6 @@ public class Request{
     //endregion
 
     //region request decoding
-
     private void decode(byte[] data) throws RequestException.DecodingException {
         if (data.length <= 0) {
             return;

@@ -1,7 +1,7 @@
 package com.openwebserver.core.Routing;
 
 
-import com.openwebserver.core.Domain;
+import com.openwebserver.core.Objects.Domain;
 import com.openwebserver.core.Objects.Request;
 
 import java.net.MalformedURLException;
@@ -97,7 +97,7 @@ public class Route {
     }
 
     public boolean requires(){
-        return getRequired().length >0;
+        return getRequired().length > 0;
     }
 
     public boolean isEnabled() {

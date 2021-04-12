@@ -1,6 +1,6 @@
 package com.openwebserver.core.Objects.Headers;
 
-import ByteReader.ByteReader;
+import com.bytereader.ByteReader;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Connection.ConnectionContent;
 
@@ -78,7 +78,6 @@ public class Headers extends ArrayList<Header> implements ConnectionContent {
     @Override
     public byte[] get() {
         StringBuilder contentBuilder = new StringBuilder();
-
         for (int i = 0; i < this.size(); i++) {
             contentBuilder.append(this.get(i).serialize());
             if (i != this.size() - 1) {

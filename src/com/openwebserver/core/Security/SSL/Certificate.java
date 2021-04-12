@@ -1,7 +1,8 @@
 package com.openwebserver.core.Security.SSL;
 
-import ByteReader.ByteReader;
+
 import FileManager.Local;
+import com.bytereader.ByteReader;
 
 
 import java.io.IOException;

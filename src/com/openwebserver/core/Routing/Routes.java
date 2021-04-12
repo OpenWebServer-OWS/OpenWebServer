@@ -1,9 +1,9 @@
 package com.openwebserver.core.Routing;
 
 
-import com.openwebserver.core.Annotations.Session;
+import com.openwebserver.core.Security.Sessions.Annotations.Session;
 import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Domain;
+import com.openwebserver.core.Objects.Domain;
 import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.Objects.Response;

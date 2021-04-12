@@ -1,4 +1,4 @@
-package com.openwebserver.core;
+package com.openwebserver.core.Objects;
 
 
 import com.openwebserver.core.Handlers.RequestHandler;

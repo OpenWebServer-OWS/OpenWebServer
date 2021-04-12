@@ -1,7 +1,7 @@
 package com.openwebserver.core.Content;
 
 
-import ByteReader.ByteReader;
+import com.bytereader.ByteReader;
 import com.openwebserver.core.Connection.ConnectionContent;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
@@ -14,7 +14,9 @@ import java.util.Arrays;
 
 public interface Content extends ConnectionContent {
 
-    long length();
+    default long length(){
+        return raw().length;
+    }
 
     Type getType();
 
@@ -37,10 +39,18 @@ public interface Content extends ConnectionContent {
     Headers getHeaders();
 
     default void HEAD() {
-        getHeaders().add(0, Header.raw("HTTP/" + Response.version + " " + getCode().toString()));
-        getHeaders().add(WebServer.serverHeader);
-        getHeaders().add(new Header("Content-Type", getType().toString()));
-        getHeaders().add(new Header("Content-Length", String.valueOf(length())));
+        if(!getHeaders().containsKey("Content-Type")){
+            getHeaders().add(new Header("Content-Type", getType().toString()));
+        }
+        if(!getHeaders().containsKey("Server")){
+            getHeaders().add(WebServer.serverHeader);
+        }
+        if(!getHeaders().containsKey("Content-Length")){
+            getHeaders().add(new Header("Content-Length", String.valueOf(length())));
+        }
+        if(getHeaders().get(0).getValue() != null){
+            getHeaders().add(0, Header.raw("HTTP/" + Response.version + " " + getCode().toString()));
+        }
     }
 
     enum Type {

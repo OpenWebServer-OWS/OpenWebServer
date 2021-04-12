@@ -14,7 +14,7 @@ public class ServiceManager extends HashMap<String, Service>{
 
     public static void register(Service service) {
         if(manager.containsKey(service.getName())){
-            manager.put(service.getName()+ "@" + UUID.randomUUID().toString(), service);
+            manager.put(service.getName()+ "@" + UUID.randomUUID(), service);
         }else{
             manager.put(service.getName(), service);
         }

@@ -1,4 +1,4 @@
-package com.openwebserver.core.Sessions;
+package com.openwebserver.core.Security.Sessions;
 
 
 import com.openwebserver.core.Content.Code;

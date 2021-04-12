@@ -1,6 +1,6 @@
 package com.openwebserver.core.Handlers;
 
-import com.openwebserver.core.Annotations.Session;
+import com.openwebserver.core.Security.Sessions.Annotations.Session;
 import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
@@ -12,17 +12,16 @@ import com.openwebserver.core.Security.Authorization.Authorizer;
 import com.openwebserver.core.Security.CORS.CORS;
 import com.openwebserver.core.Security.CORS.Policy;
 import com.openwebserver.core.Security.CORS.PolicyManager;
-import com.openwebserver.core.Sessions.SessionManager;
+import com.openwebserver.core.Security.ContentFilter.Accept;
+import com.openwebserver.core.Security.Sessions.SessionManager;
 import com.openwebserver.core.WebException;
 
-import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 
 public class RequestHandler extends Route implements RouteRegister{
 
     private ContentHandler contentHandler;
-
     private final Headers headers = new Headers();
     private java.lang.reflect.Method reflection;
     private Consumer<RequestHandler> registerListener;
@@ -51,12 +50,15 @@ public class RequestHandler extends Route implements RouteRegister{
         if (!super.hasRequired(request)) {
             throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
         }
+        if(acceptedContentType != null){
+
+        }
         if(needsAuthentication() && !getAuthorizer().authorize(request)){
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
         }
         try {
             SessionManager.bind(sessionSpecification, request);
-        }catch (com.openwebserver.core.Sessions.Session.SessionException e){
+        }catch (com.openwebserver.core.Security.Sessions.Session.SessionException e){
             if(sessionSpecification != null && !sessionSpecification.redirect().equals("")){
                 return Response.simple(Code.Temporary_Redirect).addHeader(new Header("Location", sessionSpecification.redirect())).addHeaders(this.headers);
             }
@@ -119,7 +121,6 @@ public class RequestHandler extends Route implements RouteRegister{
     public void setCORSPolicy(String policy) {
         setCORSPolicy(policy, false);
     }
-
     public void setCORSPolicy(String policy, boolean overrideOrigin) {
         if(policy == null){
             return;
@@ -152,8 +153,6 @@ public class RequestHandler extends Route implements RouteRegister{
         }
         return null;
     }
-
-
     public Policy getPolicy() {
         return policy;
     }
@@ -172,16 +171,29 @@ public class RequestHandler extends Route implements RouteRegister{
     }
     //endregion
 
+    //region method reflection
     public void setReflection(java.lang.reflect.Method method){
         setSessionSpecification(method.isAnnotationPresent(Session.class)? method.getAnnotation(Session.class): null);
         setCORSPolicy(method.isAnnotationPresent(CORS.class)? method.getAnnotation(CORS.class): null);
         setNeedsAuthentication(method.isAnnotationPresent(Authorize.class));
+        setAcceptContent(method.isAnnotationPresent(Accept.class)? method.getAnnotation(Accept.class): null);
         this.reflection = method;
     }
 
     public java.lang.reflect.Method getReflection() {
         return reflection;
     }
+    //endregion
+
+    //region contenttype
+    private Accept acceptedContentType;
+    private void setAcceptContent(Accept accept) {
+        this.acceptedContentType = accept;
+    }
+    public void acceptsContent(){
+
+    }
+    //endregion
 
     @Override
     public void register(Consumer<RequestHandler> routeConsumer) {
