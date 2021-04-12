@@ -1,9 +1,11 @@
 /out
 /images
 /test
+/res
 /.idea
 /public
 *.iml
+*.pem
 *.xml
 /META-INF
 *.MF
