@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Response implements Content {
 
@@ -29,11 +30,18 @@ public class Response implements Content {
         if (content instanceof Content) {
             this.type = ((Content) content).getType();
             this.raw = ((Content) content).raw();
+            if(((Content) content).getHeaders()!= null) {
+                this.headers.addAll(((Content) content).getHeaders());
+            }
         } else {
             this.type = type;
             this.raw = content.toString().getBytes(StandardCharsets.UTF_8);
         }
         this.HEAD();
+    }
+
+    public Response(Code code, Content content) {
+        this(code,content, content.getType());
     }
 
     protected Response(){

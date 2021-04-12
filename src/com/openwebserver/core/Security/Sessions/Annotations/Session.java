@@ -1,4 +1,4 @@
-package com.openwebserver.core.Annotations;
+package com.openwebserver.core.Security.Sessions.Annotations;
 
 
 import java.lang.annotation.ElementType;

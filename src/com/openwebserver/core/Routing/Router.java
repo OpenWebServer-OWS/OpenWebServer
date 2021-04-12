@@ -1,9 +1,9 @@
 package com.openwebserver.core.Routing;
 
-import ByteReader.ByteReader.ByteReaderException.PrematureStreamException;
+import com.bytereader.ByteReader;
 import com.openwebserver.core.Connection.Connection;
 import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Domain;
+import com.openwebserver.core.Objects.Domain;
 import com.openwebserver.core.Handlers.RequestHandler;
 import com.openwebserver.core.Objects.Request;
 import com.openwebserver.core.WebException;
@@ -50,7 +50,7 @@ public class Router {
             try {
                 Request request = Request.deserialize(self);
                 self.write(Router.find(request, self).handle(request));
-            } catch (PrematureStreamException e) {
+            } catch (ByteReader.ByteReaderException.PrematureStreamException e) {
                 self.close();
             } catch (WebException e) {
                 self.write(e.respond());
@@ -63,7 +63,6 @@ public class Router {
             }
         });
     }
-
 
     private static Routes find(Request request, Connection connection) throws RoutingException.NotFoundException {
         AtomicReference<Routes> requestHandler = new AtomicReference<>(null);

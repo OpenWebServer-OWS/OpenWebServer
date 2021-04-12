@@ -3,6 +3,7 @@ package com.openwebserver.core;
 
 import FileManager.Folder;
 import com.openwebserver.core.Connection.Connection;
+import com.openwebserver.core.Objects.Domain;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Routing.Router;
 
@@ -19,7 +20,7 @@ public class WebServer{
     public static Header serverHeader;
     public static Folder tempFolder;
 
-    private final TreeArrayList<Integer, Domain> domains = new TreeArrayList<>();
+    private final TreeArrayList<Integer, com.openwebserver.core.Objects.Domain> domains = new TreeArrayList<>();
 
     static {
         try {
@@ -44,7 +45,7 @@ public class WebServer{
         this.closed = closed;
     }
 
-    public WebServer addDomain(Domain ... domains) {
+    public WebServer addDomain(com.openwebserver.core.Objects.Domain... domains) {
         try {
             KeyManager.load(domains);
         } catch (KeyManager.KeyManagerException e) {

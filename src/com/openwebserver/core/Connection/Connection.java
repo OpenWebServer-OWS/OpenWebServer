@@ -1,6 +1,7 @@
 package com.openwebserver.core.Connection;
 
-import ByteReader.ByteReader;
+
+import com.bytereader.ByteReader;
 
 import java.io.IOException;
 import java.net.Socket;

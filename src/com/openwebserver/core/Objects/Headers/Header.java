@@ -75,10 +75,10 @@ public class Header extends Pair<String, String> {
             StringBuilder builder = new StringBuilder();
             builder.append(getKey()).append(KeyValueSeparator).append(getValue()!= null? getValue(): "");
             for (int i = 0; i < attributes.size(); i++) {
-                builder.append(attributes.get(i).toString());
-                if (i != attributes.size() - 1) {
-                    builder.append(Attribute.KeyValuePairSeparator);
+                if(i != 0){
+                    builder.append(Attribute.KeyValuePairSeparator).append(" ");
                 }
+                builder.append(attributes.get(i).toString());
             }
             return builder.toString();
         }
@@ -98,5 +98,10 @@ public class Header extends Pair<String, String> {
 
     public String raw() {
         return raw;
+    }
+
+    @Override
+    public String toString() {
+        return serialize();
     }
 }
