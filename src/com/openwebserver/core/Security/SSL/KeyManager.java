@@ -103,12 +103,6 @@ public class KeyManager implements X509KeyManager {
         String alias = null;
         if (socket instanceof SSLSocket) {
             try {
-//                SNIMatcher matcher = SNIHostName.createSNIMatcher("");
-//                Collection<SNIMatcher> matchers = new ArrayList<>(1);
-//                matchers.add(matcher);
-//                ((SSLSocket) socket).getSSLParameters().setSNIMatchers(matchers);
-//
-//                System.out.println(((SSLSocket) socket).getSSLParameters().getSNIMatchers());
                 List<SNIServerName> list = (List<SNIServerName>) ObjectEditor.value(((SSLSocket) socket).getHandshakeSession(), "requestedServerNames"); //TODO find replacement for reflection field access
                 return new String(list.get(0).getEncoded(), Charset.defaultCharset());
             } catch (NoSuchFieldException | IllegalAccessException e) {

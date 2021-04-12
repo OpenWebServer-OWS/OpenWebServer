@@ -11,8 +11,11 @@ import com.openwebserver.services.ServiceManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import static java.util.Arrays.*;
 
 
 public class Service extends RequestHandler implements Consumer<RequestHandler> {
@@ -28,25 +31,9 @@ public class Service extends RequestHandler implements Consumer<RequestHandler> 
         super(new Route(path, Route.Method.UNDEFINED),null);
         this.name = Objects.requireNonNullElseGet(name, () -> getClass().getSimpleName());
         //region create route annotations
-        for (java.lang.reflect.Method method : this.getClass().getDeclaredMethods()) {
-            if(method.isAnnotationPresent(com.openwebserver.services.Annotations.Route.class)){
-                RequestHandler requestHandler = new RequestHandler(new Route(method.getAnnotation(com.openwebserver.services.Annotations.Route.class)), request -> {
-                    try {
-                        return ((Response) method.invoke(Service.this, request));
-                    } catch (InvocationTargetException e) {
-                        throw new WebException(e).addRequest(request);
-                    }
-                });
-                requestHandler.setReflection(method);
-                requestHandler.setOnRegisterListener(this);
-                setSessionHandler(this.getSessionHandler());
-                requestHandler.addPrefix(this);
-                routes.add(requestHandler);
-            }
-        }
-        ServiceManager.register(this);
-
+        stream(this.getClass().getDeclaredMethods()).forEach(method -> RequestHandler.wrap(method, this));
         //endregion
+        ServiceManager.register(this);
     }
 
     public String getName() {

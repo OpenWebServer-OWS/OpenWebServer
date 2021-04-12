@@ -15,7 +15,10 @@ import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Security.ContentFilter.Accept;
 import com.openwebserver.core.Security.Sessions.SessionManager;
 import com.openwebserver.core.WebException;
+import com.openwebserver.services.Objects.Service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 
@@ -208,5 +211,34 @@ public class RequestHandler extends Route implements RouteRegister{
 
     public static RequestHandler inline(String path, Method method, ContentHandler handler){
         return new RequestHandler(new Route(path, method), handler);
+    }
+
+
+    public static void wrap(java.lang.reflect.Method method, Service service){
+        if(method.isAnnotationPresent(com.openwebserver.services.Annotations.Route.class)) {
+            RequestHandler handler = new RequestHandler(new Route(method.getAnnotation(com.openwebserver.services.Annotations.Route.class)), null);
+            ;
+            if (method.getReturnType().equals(Response.class)) {
+                handler.setContentHandler(request -> {
+                    try {
+                        return ((Response) method.invoke(service, request));
+                    } catch (InvocationTargetException e) {
+                        throw new WebException(e).addRequest(request);
+                    }
+                });
+            } else {
+                handler.setContentHandler(request -> {
+                    try {
+                        return Response.simple(method.invoke(service, request));
+                    } catch (InvocationTargetException e) {
+                        throw new WebException(e).addRequest(request);
+                    }
+                });
+            }
+            handler.setReflection(method);
+            handler.setOnRegisterListener(service);
+            handler.setSessionHandler(service.getSessionHandler());
+            service.add(handler);
+        }
     }
 }

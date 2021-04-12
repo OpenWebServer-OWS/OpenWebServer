@@ -6,6 +6,7 @@ import com.openwebserver.core.Content.Content;
 import com.openwebserver.core.Objects.Headers.Header;
 import com.openwebserver.core.Objects.Headers.Headers;
 import com.openwebserver.core.WebException;
+import com.together.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -54,6 +55,9 @@ public class Response implements Content {
         if (o != null) {
             if (o instanceof JSONObject || o instanceof JSONArray) {
                 return new Response(code, String.valueOf(o), Content.Type.Application.edit("json"));
+            }
+            else if(o instanceof Void){
+                return simple(Code.No_Content);
             }
             else if (o instanceof Content) {
                 return new Response(code, o, null);
@@ -126,7 +130,15 @@ public class Response implements Content {
             return simple(Code.Internal_Server_Error, o, null);
         } else if (o instanceof Code) {
             return simple((Code) o, null, null);
-        } else {
+        } else if(o instanceof Pair){
+            return simple(((Pair<Code, ?>) o).getKey(), ((Pair<Code, ?>) o).getValue(), null);
+        } else if(o instanceof Header[]){
+            return simple(Code.Ok, o).addHeader((Header[]) o);
+        } else if(o instanceof Header){
+            return simple(Code.Ok, o).addHeader((Header) o);
+        } else if(o instanceof Headers){
+            return simple(Code.Ok, o).addHeaders((Headers) o);
+        }else{
             return simple(Code.Ok, o);
         }
     }
