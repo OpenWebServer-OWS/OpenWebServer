@@ -37,7 +37,6 @@ public class Domain {
 
     public Domain(String url) throws MalformedURLException {
         this(new URL(url).getHost(), new URL(url).getPort(), new URL(url).getProtocol().equals("https"));
-
     }
 
     public Domain() {

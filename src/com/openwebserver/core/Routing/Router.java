@@ -54,8 +54,14 @@ public class Router {
                 self.close();
             } catch (WebException e) {
                 self.write(e.respond());
-            } catch (Throwable throwable) {
-                self.write(new WebException(throwable).respond(true));
+                if(VERBOSE){
+                    e.printStackTrace();
+                }
+            } catch (Throwable e) {
+                self.write(new WebException(e).respond(true));
+                if(VERBOSE){
+                    e.printStackTrace();
+                }
             } finally {
                 if (VERBOSE) {
                     System.out.println(connection.getConnectionString());
