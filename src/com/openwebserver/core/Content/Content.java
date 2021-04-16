@@ -75,8 +75,12 @@ public interface Content extends ConnectionContent {
         }
 
         public static Type wrap(String mime) {
-            String[] MIME = mime.split("/");
-            return custom(MIME[0], MIME[1]);
+            if(mime != null) {
+                String[] MIME = mime.split("/");
+                return custom(MIME[0], MIME[1]);
+            }else{
+                return Text;
+            }
         }
 
         public Type edit(String category, String type) {
