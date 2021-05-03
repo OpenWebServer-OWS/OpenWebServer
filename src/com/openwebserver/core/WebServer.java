@@ -19,6 +19,7 @@ public class WebServer{
 
     public static Header serverHeader;
     public static Folder tempFolder;
+    public static String rootFilename = "index.html";
 
     private final TreeArrayList<Integer, com.openwebserver.core.Objects.Domain> domains = new TreeArrayList<>();
 
@@ -58,9 +59,7 @@ public class WebServer{
     }
 
     public void start(){
-        domains.keySet().forEach(port -> {
-                createServerSocket(port,domains.get(port).get(0).isSecure());
-        });
+        domains.keySet().forEach(port -> createServerSocket(port,domains.get(port).get(0).isSecure()));
     }
 
     private void createServerSocket(int port, boolean secure){

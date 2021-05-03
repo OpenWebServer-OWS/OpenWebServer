@@ -1,5 +1,7 @@
 package com.openwebserver.core.Handlers;
 
+import FileManager.Folder;
+import FileManager.Local;
 import com.openwebserver.core.Security.Sessions.Annotations.Session;
 import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Objects.Headers.Header;
@@ -15,6 +17,7 @@ import com.openwebserver.core.Security.CORS.PolicyManager;
 import com.openwebserver.core.Security.ContentFilter.Accept;
 import com.openwebserver.core.Security.Sessions.SessionManager;
 import com.openwebserver.core.WebException;
+import com.openwebserver.core.WebServer;
 import com.openwebserver.services.Objects.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -54,7 +57,7 @@ public class RequestHandler extends Route implements RouteRegister{
             throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
         }
         if(acceptedContentType != null){
-
+            //TODO Filter Accepted content with requesthandler
         }
         if(needsAuthentication() && !getAuthorizer().authorize(request)){
             throw new WebException(Code.Unauthorized,"Invalid Token").addRequest(request);
@@ -106,9 +109,7 @@ public class RequestHandler extends Route implements RouteRegister{
     //region CORS
     public void handleCORS(Request request){
         if(overrideOrigin){
-            request.headers.tryGet("Origin", header -> {
-                this.headers.replace("Access-Control-Allow-Origin", header.getValue());
-            });
+            request.headers.tryGet("Origin", header -> this.headers.replace("Access-Control-Allow-Origin", header.getValue()));
         }
     }
 
@@ -134,9 +135,7 @@ public class RequestHandler extends Route implements RouteRegister{
             CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> {
                 Headers headers = this.policy.pack();
                 if(overrideOrigin){
-                    request.headers.tryGet("Origin", header -> {
-                        headers.replace("Access-Control-Allow-Origin", header.getValue());
-                    });
+                    request.headers.tryGet("Origin", header -> headers.replace("Access-Control-Allow-Origin", header.getValue()));
                 }
                 return Response.simple(Code.No_Content).addHeaders(headers);
             });
@@ -213,11 +212,25 @@ public class RequestHandler extends Route implements RouteRegister{
         return new RequestHandler(new Route(path, method), handler);
     }
 
+    public static RequestHandler folder(String pathPrefix, Folder f){
+        return new RequestHandler(new Route(pathPrefix + "/#", Method.GET), request -> {
+            String path = request.getPath(true);
+            if(path.endsWith("/") || !path.contains("."))
+            {
+                return Response.simple(new Local(f.getPath() + "/" + WebServer.rootFilename));
+            }
+            return Response.simple(new Local(f.getPath() + path));
+        });
+    }
+
+    public static RequestHandler folder(Folder folder){
+        return folder("", folder);
+    }
+
 
     public static void wrap(java.lang.reflect.Method method, Service service){
         if(method.isAnnotationPresent(com.openwebserver.services.Annotations.Route.class)) {
             RequestHandler handler = new RequestHandler(new Route(method.getAnnotation(com.openwebserver.services.Annotations.Route.class)), null);
-            ;
             if (method.getReturnType().equals(Response.class)) {
                 handler.setContentHandler(request -> {
                     try {
