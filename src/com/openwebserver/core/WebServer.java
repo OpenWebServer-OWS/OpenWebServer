@@ -2,13 +2,13 @@ package com.openwebserver.core;
 
 
 import FileManager.Folder;
-import com.openwebserver.core.Connection.Connection;
-import com.openwebserver.core.Objects.Domain;
-import com.openwebserver.core.Objects.Headers.Header;
-import com.openwebserver.core.Routing.Router;
+import com.openwebserver.core.connection.Connection;
+import com.openwebserver.core.objects.Domain;
+import com.openwebserver.core.objects.headers.Header;
+import com.openwebserver.core.routing.Router;
 
-import com.openwebserver.core.Security.SSL.KeyManager;
-import com.openwebserver.core.Security.SecurityManager;
+import com.openwebserver.core.security.SSL.KeyManager;
+import com.openwebserver.core.security.SecurityManager;
 import com.tree.TreeArrayList;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class WebServer{
     public static Folder tempFolder;
     public static String rootFilename = "index.html";
 
-    private final TreeArrayList<Integer, com.openwebserver.core.Objects.Domain> domains = new TreeArrayList<>();
+    private final TreeArrayList<Integer, com.openwebserver.core.objects.Domain> domains = new TreeArrayList<>();
 
     static {
         try {
@@ -46,7 +46,7 @@ public class WebServer{
         this.closed = closed;
     }
 
-    public WebServer addDomain(com.openwebserver.core.Objects.Domain... domains) {
+    public WebServer addDomain(com.openwebserver.core.objects.Domain... domains) {
         try {
             KeyManager.load(domains);
         } catch (KeyManager.KeyManagerException e) {

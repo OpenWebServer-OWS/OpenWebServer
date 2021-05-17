@@ -11,11 +11,11 @@ Java Multi domain HTTPS and HTTP WebServer
 
 ```java
 
-import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Objects.Domain;
-import com.openwebserver.core.Handlers.RequestHandler;
-import com.openwebserver.core.Objects.Response;
-import com.openwebserver.core.Routing.Route;
+import com.openwebserver.core.content.Code;
+import com.openwebserver.core.objects.Domain;
+import com.openwebserver.core.handlers.RequestHandler;
+import com.openwebserver.core.objects.Response;
+import com.openwebserver.core.routing.Route;
 import com.openwebserver.core.WebServer;
 
 public class Main {
@@ -37,11 +37,11 @@ public class Main {
 ### External HTTP domain http://example.com
 
 ```java
-import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Handlers.RequestHandler;
-import com.openwebserver.core.Objects.Domain;
-import com.openwebserver.core.Objects.Response;
-import com.openwebserver.core.Routing.Route;
+import com.openwebserver.core.content.Code;
+import com.openwebserver.core.handlers.RequestHandler;
+import com.openwebserver.core.objects.Domain;
+import com.openwebserver.core.objects.Response;
+import com.openwebserver.core.routing.Route;
 import com.openwebserver.core.WebServer;
 
 import java.net.MalformedURLException;
@@ -65,11 +65,11 @@ public class Main {
 ### External HTTPS domain https://example.com
 
 ```java
-import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Objects.Domain;
-import com.openwebserver.core.Handlers.RequestHandler;
-import com.openwebserver.core.Objects.Response;
-import com.openwebserver.core.Routing.Route;
+import com.openwebserver.core.content.Code;
+import com.openwebserver.core.objects.Domain;
+import com.openwebserver.core.handlers.RequestHandler;
+import com.openwebserver.core.objects.Response;
+import com.openwebserver.core.routing.Route;
 import com.openwebserver.core.WebServer;
 
 import java.net.MalformedURLException;
@@ -94,12 +94,12 @@ public class Main {
 ### Multi HTTPS domain https://example.com, https://example.nl
 
 ```java
-import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Objects.Domain;
-import com.openwebserver.core.Handlers.RequestHandler;
-import com.openwebserver.core.Objects.Response;
-import com.openwebserver.core.Routing.Route;
-import com.openwebserver.core.Security.SSL.Certificate;
+import com.openwebserver.core.content.Code;
+import com.openwebserver.core.objects.Domain;
+import com.openwebserver.core.handlers.RequestHandler;
+import com.openwebserver.core.objects.Response;
+import com.openwebserver.core.routing.Route;
+import com.openwebserver.core.security.SSL.Certificate;
 import com.openwebserver.core.WebServer;
 
 import java.net.MalformedURLException;

@@ -1,18 +1,19 @@
 package com.openwebserver.core;
 
 
-import com.openwebserver.core.Content.Code;
-import com.openwebserver.core.Content.Content;
-import com.openwebserver.core.Handlers.RequestHandler;
-import com.openwebserver.core.Objects.Headers.Header;
-import com.openwebserver.core.Objects.Headers.Headers;
-import com.openwebserver.core.Objects.Request;
-import com.openwebserver.core.Objects.Response;
-import com.openwebserver.services.Objects.Service;
+import com.openwebserver.core.content.Code;
+import com.openwebserver.core.content.Content;
+import com.openwebserver.core.handlers.RequestHandler;
+import com.openwebserver.core.objects.headers.Header;
+import com.openwebserver.core.objects.headers.Headers;
+import com.openwebserver.core.objects.Request;
+import com.openwebserver.core.objects.Response;
+import com.openwebserver.services.objects.Service;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 public class WebException extends Throwable {
 
@@ -46,9 +47,7 @@ public class WebException extends Throwable {
     }
 
     public WebException addHeader(Header... headers){
-        for (Header header : headers) {
-            this.headers.add(header);
-        }
+        this.headers.addAll(Arrays.asList(headers));
         return this;
     }
 
@@ -73,13 +72,6 @@ public class WebException extends Throwable {
         return this;
     }
 
-    public WebException setHandler(RequestHandler handler){
-        if(handler instanceof Service){
-            this.service = service;
-        }
-        return this;
-    }
-
     public WebException(Code code, InvocationTargetException t){
         super(t.getTargetException());
         if(t.getTargetException() instanceof WebException){
@@ -94,10 +86,6 @@ public class WebException extends Throwable {
 
     public WebException(String message){
         this(Code.Internal_Server_Error, message);
-    }
-
-    public WebException(WebException e){
-        this(e.getCode(), e.getMessage());
     }
 
     public Code getCode() {
