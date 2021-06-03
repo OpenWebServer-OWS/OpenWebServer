@@ -1,8 +1,4 @@
-package com.openwebserver.core.objects;
-
-
-import com.openwebserver.core.objects.headers.Attribute;
-import com.openwebserver.core.objects.headers.Header;
+package com.openwebserver.core.http;
 
 import java.util.Date;
 

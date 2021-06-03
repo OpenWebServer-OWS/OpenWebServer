@@ -1,37 +1,37 @@
 package com.openwebserver.core.objects;
 
 import FileManager.Local;
-import com.bytereader.ByteReader;
-import com.bytestream.ByteStream;
-import com.bytestream.Bytes;
-import com.openwebserver.core.connection.Connection;
+
+import com.openwebserver.core.connection.client.Connection;
+import com.openwebserver.core.connection.client.utils.SocketReader;
+
 import com.openwebserver.core.connection.ConnectionManager;
-import com.openwebserver.core.content.Code;
+import com.openwebserver.core.http.content.Code;
 import com.openwebserver.core.handlers.RequestHandler;
-import com.openwebserver.core.objects.headers.Header;
-import com.openwebserver.core.objects.headers.Headers;
+import com.openwebserver.core.http.Header;
+import com.openwebserver.core.http.Headers;
 import com.openwebserver.core.routing.Route;
 import com.openwebserver.core.routing.Router;
 import com.openwebserver.core.security.sessions.Session;
 import com.openwebserver.core.WebException;
 import com.openwebserver.core.WebServer;
 import com.together.Pair;
+import nl.bytes.Bytes;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Request{
 
-    protected HashMap<String, Object> POST = new HashMap<>();
-    protected final HashMap<String, String> GET;
-    protected final HashMap<String, Pair<String, Local>> FILES = new HashMap<>();
+    public HashMap<String, Object> POST = new HashMap<>();
+    public HashMap<String, String> GET;
+    public final HashMap<String, Pair<String, Local>> FILES = new HashMap<>();
 
     public HashMap<String, Object> SESSION;
     public Session session;
@@ -50,16 +50,15 @@ public class Request{
         this.method = Route.Method.valueOf(headers.getMethod());
         this.headers = headers;
         this.domain = Router.getDomain(getAlias());
-        this.GET = URLEncoded(headers.getPath());
     }
 
     public String getAlias() {
         return headers.get("Host").getValue().split(":")[0];
     }
 
-    public static Request deserialize(Connection connection) throws ByteReader.ByteReaderException.PrematureStreamException, RequestException, Bytes.BytesException, ByteStream.PrematureStreamException, Router.RoutingException {
+    public static Request deserialize(Connection connection) throws RequestException, Router.RoutingException, SocketReader.ConnectionReaderException {
         Request request = new Request(Headers.Incoming(connection));
-        request.connectionRef = connection.getConnectionString();
+        request.connectionRef = connection.toString();
         request.decode(connection);
 
         if (!request.headers.containsKey("Host")) {
@@ -73,10 +72,6 @@ public class Request{
             return Integer.parseInt(headers.get("Content-Length").getValue());
         }
         return 0;
-    }
-
-    public HashMap<String, String> GET() {
-        return GET;
     }
 
     public HashMap<String, Pair<String, Local>> FILES() {
@@ -149,20 +144,22 @@ public class Request{
     //endregion
 
     //region request decoding
-    private void decode(Connection connection) throws ByteStream.PrematureStreamException, Bytes.BytesException {
+    private void decode(Connection connection) throws SocketReader.PrematureStreamException {
         if (headers.containsKey("Content-Length")) {
             Header contentType = headers.get("Content-Type");
+            int contentLength = Integer.parseInt(headers.get("Content-Length").getValue());
             switch (contentType.getValue()) {
-                case "multipart/form-data" -> MultipartDecoder(connection);
-                case "application/x-www-form-urlencoded" -> POST.putAll(URLEncoded(connection.readAll().toString()));
-                case "application/json" -> POST = (HashMap<String, Object>) new JSONObject(connection.readAll().toString()).toMap();
+                case "multipart/form-data" -> MultipartDecoder(connection.readFor(contentLength));
+                case "application/x-www-form-urlencoded" -> POST.putAll(URLEncoded(connection.readFor(contentLength).toString()));
+                case "application/json" -> POST = (HashMap<String, Object>) new JSONObject(connection.readFor(contentLength).toString()).toMap();
                 default -> {
                     HashMap<String, Object> post = new HashMap<>();
-                    post.put("$plain", connection.readAll().toString());
+                    post.put("$plain", connection.readFor(contentLength).toString(Charset.defaultCharset()));
                     POST = post;
                 }
             }
         }
+        this.GET = URLEncoded(headers.getPath());
 
     }
 
@@ -182,9 +179,10 @@ public class Request{
         return fields;
     }
 
-    private void MultipartDecoder(ByteStream stream) throws ByteStream.PrematureStreamException {
-        stream.readFor(size()).split("--" + headers.get("Content-Type").get("boundary").getValue() + Header.separator,StandardCharsets.UTF_8)
-        .forEach(bytes -> FormData.decode(bytes, this));
+    private void MultipartDecoder(Bytes bytes){
+        bytes.split(("--" + headers.get("Content-Type").get("boundary").getValue() + Header.separator).getBytes(StandardCharsets.UTF_8)).forEach(bytes1 -> {
+            if(bytes1.length() > 0) FormData.decode(bytes1, this);
+        });
     }
 
     public Route.Method getMethod() {
@@ -207,17 +205,22 @@ public class Request{
 
         public static void decode(Bytes bytes, Request request){
             AtomicInteger headerLength = new AtomicInteger();
-            Headers headers = Headers.Decode(bytes.until(Headers.end, Charset.defaultCharset()).inline(bytes1 -> headerLength.set(bytes1.size())));
-            bytes = bytes.range(headerLength.get()).dropLast(2).dropFirst(Headers.end.length());
+            Headers headers = Headers.Decode(bytes.until(Headers.end.getBytes(Charset.defaultCharset())).inline(bytes1 -> headerLength.set(bytes1.length())));
+            bytes = bytes.range(headerLength.get() + Headers.end.length(),
+                    bytes.length()
+                            - (request.headers.get("Content-Type").get("boundary").getValue().length() + "--".length())
+                            - Headers.end.length()
+                            - Header.separator.length()
+            );
             if (isFile(headers)) {
                 try {
-                    request.FILES.put(getName(headers), new Pair<>(getFilename(headers), Local.fromBytes(WebServer.tempFolder, UUID.randomUUID() + "_" + getFilename(headers),  bytes.toPrimitive())));
+                    request.FILES.put(getName(headers), new Pair<>(getFilename(headers), Local.fromBytes(WebServer.tempFolder, UUID.randomUUID() + "_" + getFilename(headers),  bytes.getArray())));
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.err.println("Can't create file from data data to raw format");
                 }
             } else {
-                request.POST.put(getName(headers), bytes.toString());
+                request.POST.put(getName(headers), bytes.toString(Charset.defaultCharset()));
             }
         }
     }

@@ -1,9 +1,9 @@
 package com.openwebserver.core.security.sessions;
 
 
-import com.openwebserver.core.content.Code;
-import com.openwebserver.core.objects.Cookie;
-import com.openwebserver.core.objects.headers.Header;
+import com.openwebserver.core.http.content.Code;
+import com.openwebserver.core.http.Cookie;
+import com.openwebserver.core.http.Header;
 import com.openwebserver.core.WebException;
 
 import java.util.*;

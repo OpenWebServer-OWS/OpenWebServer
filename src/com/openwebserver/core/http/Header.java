@@ -1,4 +1,4 @@
-package com.openwebserver.core.objects.headers;
+package com.openwebserver.core.http;
 
 
 import com.together.Pair;
@@ -16,7 +16,7 @@ public class Header extends Pair<String, String> {
     String raw;
 
     @SafeVarargs
-    public Header(String key, String value, Attribute<String>... attributes) {
+    public Header(String key, String value, Attribute<String> ... attributes) {
         super(key, value);
         this.attributes = new ArrayList<>(Arrays.asList(attributes));
     }
@@ -41,12 +41,8 @@ public class Header extends Pair<String, String> {
             return Header.raw(encoded);
         }
         String[] kvp = encoded.split(":");
-        if(kvp[1].contains(Attribute.KeyValuePairSeparator)){
-             kvp[1] = kvp[1].substring(0, kvp[1].indexOf(Attribute.KeyValuePairSeparator));
-        }
         Header h = new Header(kvp[0].trim(), kvp[1].trim());
-        h.raw = encoded;
-        Attribute.Decode(encoded, h);
+        Attribute.Decode(encoded,h);
         return h;
     }
 

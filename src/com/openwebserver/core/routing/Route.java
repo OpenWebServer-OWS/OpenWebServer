@@ -93,7 +93,7 @@ public class Route {
     }
 
     protected boolean hasRequired(Request request) {
-        return request.GET().keySet().containsAll(Arrays.asList(getRequired())) || request.POST().keySet().containsAll(Arrays.asList(getRequired()));
+        return request.GET.keySet().containsAll(Arrays.asList(getRequired())) || request.POST().keySet().containsAll(Arrays.asList(getRequired()));
     }
 
     public boolean requires(){

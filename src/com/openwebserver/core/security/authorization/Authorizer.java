@@ -1,6 +1,6 @@
 package com.openwebserver.core.security.authorization;
 
-import com.openwebserver.core.content.Code;
+import com.openwebserver.core.http.content.Code;
 import com.openwebserver.core.objects.Request;
 import com.openwebserver.core.WebException;
 

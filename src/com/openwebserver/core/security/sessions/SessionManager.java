@@ -2,7 +2,7 @@ package com.openwebserver.core.security.sessions;
 
 
 
-import com.openwebserver.core.objects.headers.Header;
+import com.openwebserver.core.http.Header;
 import com.openwebserver.core.objects.Request;
 
 import java.util.Date;

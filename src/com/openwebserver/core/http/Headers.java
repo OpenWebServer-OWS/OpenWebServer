@@ -1,17 +1,19 @@
-package com.openwebserver.core.objects.headers;
+package com.openwebserver.core.http;
 
-import com.bytestream.ByteStream;
-import com.bytestream.Bytes;
-import com.openwebserver.core.connection.Connection;
-import com.openwebserver.core.connection.ConnectionContent;
+import com.openwebserver.core.connection.client.Connection;
+import com.openwebserver.core.connection.client.utils.SocketContent;
+import com.openwebserver.core.connection.client.utils.SocketReader;
+import nl.bytes.Bytes;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class Headers extends ArrayList<Header> implements ConnectionContent {
+public class Headers extends ArrayList<Header> implements SocketContent {
 
     public final static String end = Header.separator + Header.separator;
 
@@ -19,10 +21,10 @@ public class Headers extends ArrayList<Header> implements ConnectionContent {
         addAll(Arrays.asList(headers));
     }
 
-    public static Headers Incoming(Connection connection) throws Bytes.BytesException, ByteStream.PrematureStreamException {
-        Headers headers = Headers.Decode(connection.readUntil(end).toString());
+    public static Headers Incoming(Connection connection) throws SocketReader.ConnectionReaderException {
+        Headers headers = Headers.Decode(connection.readUntil(end.getBytes(StandardCharsets.UTF_8)));
         if(headers.isEmpty()){
-            throw new ByteStream.PrematureStreamException("No headers in request");
+            throw new SocketReader.PrematureStreamException("No headers in request");
         }
         return headers;
     }
@@ -32,7 +34,7 @@ public class Headers extends ArrayList<Header> implements ConnectionContent {
     }
 
     public static Headers Decode(Bytes bytes) {
-        return new Headers().deserialize(bytes.toString());
+        return new Headers().deserialize(bytes.toString(Charset.defaultCharset()));
     }
 
     public Header get(String key, boolean ignoreUppercase) {

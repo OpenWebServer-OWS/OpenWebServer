@@ -1,17 +1,20 @@
 package com.openwebserver.core.routing;
 
-import com.bytereader.ByteReader;
-import com.openwebserver.core.connection.Connection;
-import com.openwebserver.core.content.Code;
+
+import com.openwebserver.core.connection.client.Connection;
+import com.openwebserver.core.http.content.Code;
 import com.openwebserver.core.objects.Domain;
 import com.openwebserver.core.handlers.RequestHandler;
 import com.openwebserver.core.objects.Request;
 import com.openwebserver.core.WebException;
 import com.tree.TreeArrayList;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.openwebserver.core.connection.client.utils.SocketReader.*;
 
 public class Router {
 
@@ -25,6 +28,7 @@ public class Router {
 
     public static void register(Domain domain, RequestHandler handler) {
         getInstance().routes.populate(domain);
+        handler.setDomain(domain);
         Routes routes = null;
         for (Routes routes1 : getInstance().routes.branch(domain)) {
             if (routes1.getPath().equals("#")) {
@@ -50,21 +54,21 @@ public class Router {
             try {
                 Request request = Request.deserialize(self);
                 self.write(Router.find(request, self).handle(request));
-            } catch (ByteReader.ByteReaderException.PrematureStreamException e) {
+            } catch (ConnectionReaderException | IOException e) {
                 self.close();
             } catch (WebException e) {
-                self.write(e.respond());
+                self.tryWrite(e.respond());
                 if(VERBOSE){
                     e.printStackTrace();
                 }
-            } catch (Throwable e) {
-                self.write(new WebException(e).respond(true));
+            } catch (Exception e){
+                connection.close();
                 if(VERBOSE){
                     e.printStackTrace();
                 }
-            } finally {
+            } finally{
                 if (VERBOSE) {
-                    System.out.println(connection.getConnectionString());
+                    System.out.println(connection);
                 }
             }
         });

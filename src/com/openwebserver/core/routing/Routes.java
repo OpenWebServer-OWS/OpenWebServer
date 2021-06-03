@@ -2,7 +2,7 @@ package com.openwebserver.core.routing;
 
 
 import com.openwebserver.core.security.sessions.annotations.Session;
-import com.openwebserver.core.content.Code;
+import com.openwebserver.core.http.content.Code;
 import com.openwebserver.core.objects.Domain;
 import com.openwebserver.core.handlers.RequestHandler;
 import com.openwebserver.core.objects.Request;
@@ -60,7 +60,7 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
             return true;
         }
         if (Route.RESTDecoder.containsRegex(getPath())) {
-            return Route.RESTDecoder.Match(request.getPath(true), route , request.GET()::put);
+            return Route.RESTDecoder.Match(request.getPath(true), route , request.GET::put);
         } else {
             String cleanPath = request.getPath(true);
             return getPath().equals(cleanPath) || (cleanPath.endsWith("/") && getPath().equals(cleanPath.substring(0, cleanPath.length() - 1))) || getPath().equals(cleanPath + "/");
@@ -73,7 +73,7 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
         return this;
     }
 
-    public Response handle(Request request) throws Throwable {
+    public Response handle(Request request) throws WebException {
         RequestHandler handler = null;
         if(containsKey(request.getMethod())){
             handler = get(request.getMethod());

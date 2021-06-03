@@ -1,4 +1,4 @@
-package com.openwebserver.core.content;
+package com.openwebserver.core.http.content;
 
 public enum Code {
 

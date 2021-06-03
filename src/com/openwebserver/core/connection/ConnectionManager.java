@@ -1,17 +1,23 @@
 package com.openwebserver.core.connection;
 
+
+
+import com.openwebserver.core.connection.client.Connection;
+import com.openwebserver.core.connection.client.utils.SocketReader;
+import com.openwebserver.core.connection.client.utils.SocketWriter;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.function.BiConsumer;
 
 
 public class ConnectionManager{
 
     public enum Access{
-        WRITER(ConnectionWriter.class),
+        WRITER(SocketWriter.class),
+        READER(SocketReader.class),
         OUTPUTSTREAM(OutputStream.class),
         INPUTSTREAM(InputStream.class),
         SOCKET(Socket.class),
@@ -46,10 +52,6 @@ public class ConnectionManager{
 
     private ConnectionManager(){}
 
-    public static void HandOver(String connectionId, BiConsumer<Connection, Object[]> writer) {
-        getInstance().connectionMap.get(connectionId).HandOff(writer);
-    }
-
     public static ConnectionManager getInstance() {
         return instance;
     }
@@ -79,13 +81,13 @@ public class ConnectionManager{
     }
 
     public static Connection register(Connection c) {
-        getInstance().connectionMap.put(c.getConnectionString(), c);
+        getInstance().connectionMap.put(c.toString(), c);
         getInstance().counter++;
         return c;
     }
 
     public static void close(Connection connection) {
-        getInstance().connectionMap.remove(connection.getConnectionString());
+        getInstance().connectionMap.remove(connection.toString());
     }
 
     public static class ConnectionManagerException extends Throwable {

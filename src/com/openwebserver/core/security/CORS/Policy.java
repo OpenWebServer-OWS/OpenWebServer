@@ -1,7 +1,7 @@
 package com.openwebserver.core.security.CORS;
 
-import com.openwebserver.core.objects.headers.Header;
-import com.openwebserver.core.objects.headers.Headers;
+import com.openwebserver.core.http.Header;
+import com.openwebserver.core.http.Headers;
 import com.openwebserver.core.routing.Route;
 
 

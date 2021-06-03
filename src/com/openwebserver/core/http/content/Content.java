@@ -1,18 +1,19 @@
-package com.openwebserver.core.content;
+package com.openwebserver.core.http.content;
 
 
-import com.bytereader.ByteReader;
-import com.openwebserver.core.connection.ConnectionContent;
-import com.openwebserver.core.objects.headers.Header;
-import com.openwebserver.core.objects.headers.Headers;
+
+import com.openwebserver.core.connection.client.utils.SocketContent;
+import com.openwebserver.core.http.Header;
+import com.openwebserver.core.http.Headers;
 
 import com.openwebserver.core.objects.Response;
 import com.openwebserver.core.WebServer;
+import nl.bytes.Bytes;
 
 import java.util.Arrays;
 
 
-public interface Content extends ConnectionContent {
+public interface Content extends SocketContent {
 
     default long length(){
         return raw().length;
@@ -28,7 +29,7 @@ public interface Content extends ConnectionContent {
 
 
     default byte[] get() {
-        return ByteReader.combine(getHeaders().get(), raw());
+        return Bytes.concat(getHeaders().get(), raw());
     }
 
     default Content addHeader(Header... headers){

@@ -1,9 +1,7 @@
-package com.openwebserver.core.security.SSL;
-
+package com.openwebserver.core.connection.security;
 
 import FileManager.Local;
-import com.bytereader.ByteReader;
-
+import nl.bytes.Bytes;
 
 import java.io.IOException;
 import java.security.KeyFactory;
@@ -62,7 +60,7 @@ public class Certificate<T>{
     }
 
     @SuppressWarnings("unchecked")
-    public T createKey(Class<T> tClass) throws NoSuchAlgorithmException, InvalidKeySpecException, CertificateException {
+    public T createKey(Class<T> tClass) throws NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, IOException {
         switch (type) {
             case PRIVATE -> {
                 String data = new String(encoded);
@@ -71,7 +69,7 @@ public class Certificate<T>{
                 return (T) KeyFactory.getInstance(Type.PRIVATE.algorithm).generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(tokens[0].replaceAll("\n", ""))));
             }
             case PUBLIC -> {
-                return (T) CertificateFactory.getInstance("X.509").generateCertificate(new ByteReader(encoded).toInputStream());
+                return (T) CertificateFactory.getInstance("X.509").generateCertificate(new Bytes(encoded).asInputStream());
             }
         }
         return null;

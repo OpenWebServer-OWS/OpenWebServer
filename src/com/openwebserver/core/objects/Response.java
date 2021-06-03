@@ -1,11 +1,11 @@
 package com.openwebserver.core.objects;
 
 import FileManager.Local;
-import com.openwebserver.core.content.Code;
-import com.openwebserver.core.content.Content;
-import com.openwebserver.core.objects.headers.Header;
-import com.openwebserver.core.objects.headers.Headers;
+import com.openwebserver.core.http.Header;
+import com.openwebserver.core.http.Headers;
 import com.openwebserver.core.WebException;
+import com.openwebserver.core.http.content.Code;
+import com.openwebserver.core.http.content.Content;
 import com.together.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -143,10 +143,6 @@ public class Response implements Content {
 
     //region response methods
 
-    @Override
-    public long length() {
-        return raw.length;
-    }
 
     @Override
     public Type getType() {

@@ -1,34 +1,27 @@
 package com.openwebserver.core.objects;
 
 
+import com.openwebserver.core.connection.security.Certificate;
+import com.openwebserver.core.connection.security.ContextProvider;
 import com.openwebserver.core.handlers.RequestHandler;
 import com.openwebserver.core.routing.Router;
-import com.openwebserver.core.security.SSL.Certificate;
-import com.openwebserver.core.security.SecurityManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
-public class Domain {
+public class Domain extends ContextProvider {
 
-    private final String alias;
-    private final boolean secure;
     private final int port;
 
-    private Certificate<X509Certificate> certificate;
-    private Certificate<PrivateKey> privateKey;
-
     public Domain(String alias, int port, boolean secure) {
-        this.alias = alias;
+        super(alias);
         if (port == -1) {
             this.port = secure ? 443 : 80;
         } else {
             this.port = port;
         }
-        this.secure = secure;
-        SecurityManager.registerHost(getAlias());
     }
 
     public Domain(String alias, boolean secure) {
@@ -44,48 +37,31 @@ public class Domain {
     }
 
     public Domain addHandler(RequestHandler requestHandler) {
-        requestHandler.setDomain(this);
         requestHandler.register(handler -> Router.register(this, handler));
         return this;
     }
 
     public URL getUrl() throws MalformedURLException {
-        return new URL(secure ? "https" : "http", alias, port, "");
+        return new URL(getProtocol(), getAlias(), port, "");
     }
 
     public String getProtocol() {
-        return secure ? "https" : "http";
+        return isSecure() ? "https" : "http";
     }
 
     public int getPort() {
         return port;
     }
 
-    public boolean isSecure() {
-        return secure;
-    }
-
-    public String getAlias() {
-        return this.alias;
-    }
-
-    public Domain setCertificates(Certificate<X509Certificate> certificate, Certificate<PrivateKey> privateKey){
-        this.certificate = certificate;
-        this.privateKey = privateKey;
-        return this;
-    }
-
-    public Certificate<X509Certificate> getCertificate() {
-        return certificate;
-    }
-
-    public Certificate<PrivateKey> getPrivateKey() {
-        return privateKey;
-    }
-
     @Override
     public String toString() {
-        return alias;
+        return getAlias();
+    }
+
+    public Domain setCertificates(Certificate<PrivateKey> privateKeyCertificate, Certificate<X509Certificate> certificate){
+        setPrivateKey(privateKeyCertificate);
+        setCertificate(certificate);
+        return this;
     }
 
 }

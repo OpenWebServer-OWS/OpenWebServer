@@ -1,11 +1,10 @@
 package com.openwebserver.core;
 
 
-import com.openwebserver.core.content.Code;
-import com.openwebserver.core.content.Content;
-import com.openwebserver.core.handlers.RequestHandler;
-import com.openwebserver.core.objects.headers.Header;
-import com.openwebserver.core.objects.headers.Headers;
+import com.openwebserver.core.http.content.Code;
+import com.openwebserver.core.http.content.Content;
+import com.openwebserver.core.http.Header;
+import com.openwebserver.core.http.Headers;
 import com.openwebserver.core.objects.Request;
 import com.openwebserver.core.objects.Response;
 import com.openwebserver.services.objects.Service;
@@ -129,8 +128,8 @@ public class WebException extends Throwable {
             exception.put("stacktrace", stackTrace);
         }
         if(request != null){
-            exception.put("GET", request.GET());
-            exception.put("POST", request.POST());
+            exception.put("GET", request.GET);
+            exception.put("POST", request.POST);
             exception.put("method", request.getMethod());
             exception.put("path", request.getPath());
         }

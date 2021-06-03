@@ -3,9 +3,9 @@ package com.openwebserver.core.handlers;
 import FileManager.Folder;
 import FileManager.Local;
 import com.openwebserver.core.security.sessions.annotations.Session;
-import com.openwebserver.core.content.Code;
-import com.openwebserver.core.objects.headers.Header;
-import com.openwebserver.core.objects.headers.Headers;
+import com.openwebserver.core.http.content.Code;
+import com.openwebserver.core.http.Header;
+import com.openwebserver.core.http.Headers;
 import com.openwebserver.core.objects.Request;
 import com.openwebserver.core.objects.Response;
 import com.openwebserver.core.routing.Route;
@@ -49,7 +49,7 @@ public class RequestHandler extends Route implements RouteRegister{
         this.contentHandler = contentHandler;
     }
 
-    public Response handle(Request request) throws Throwable {
+    public Response handle(Request request) throws WebException {
         request.setHandler(this);
         handleCORS(request);
         if (!super.hasRequired(request)) {
@@ -234,7 +234,7 @@ public class RequestHandler extends Route implements RouteRegister{
                 handler.setContentHandler(request -> {
                     try {
                         return ((Response) method.invoke(service, request));
-                    } catch (InvocationTargetException e) {
+                    } catch (InvocationTargetException | IllegalAccessException e) {
                         throw new WebException(e).addRequest(request);
                     }
                 });
@@ -242,7 +242,7 @@ public class RequestHandler extends Route implements RouteRegister{
                 handler.setContentHandler(request -> {
                     try {
                         return Response.simple(method.invoke(service, request));
-                    } catch (InvocationTargetException e) {
+                    } catch (InvocationTargetException | IllegalAccessException e) {
                         throw new WebException(e).addRequest(request);
                     }
                 });
