@@ -58,6 +58,10 @@ public class Request{
 
     public static Request deserialize(Connection connection) throws RequestException, Router.RoutingException, SocketReader.ConnectionReaderException {
         Request request = new Request(Headers.Incoming(connection));
+        if(Router.VERBOSE){
+            System.out.println("Headers decoded");
+            System.out.println(System.currentTimeMillis());
+        }
         request.connectionRef = connection.toString();
         request.decode(connection);
 

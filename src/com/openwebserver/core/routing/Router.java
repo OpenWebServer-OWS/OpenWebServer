@@ -51,9 +51,22 @@ public class Router {
 
     public static void handle(Connection connection) {
         connection.handle((self, args) -> {
+            long start = System.currentTimeMillis();
             try {
+                if(VERBOSE){
+                    System.out.println("New connection: "+ connection);
+                    System.out.println(start);
+                }
                 Request request = Request.deserialize(self);
+                if(VERBOSE){
+                    System.out.println("Request Decoded: "+ connection);
+                    System.out.println(System.currentTimeMillis() - start);
+                }
                 self.write(Router.find(request, self).handle(request));
+                if(VERBOSE){
+                    System.out.println("Handled Route Decoded: "+ connection);
+                    System.out.println(System.currentTimeMillis() - start);
+                }
             } catch (ConnectionReaderException | IOException e) {
                 self.close();
             } catch (WebException e) {
@@ -69,6 +82,7 @@ public class Router {
             } finally{
                 if (VERBOSE) {
                     System.out.println(connection);
+                    System.out.println("DONE "  + (System.currentTimeMillis() -start));
                 }
             }
         });

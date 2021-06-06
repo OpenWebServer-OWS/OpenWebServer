@@ -61,7 +61,7 @@ public interface SocketReader {
         Bytes bytes = new Bytes(size);
         for (int i = 0; i < size; i++) {
             try {
-                bytes.set(i,(byte) getInputStream().read());
+                bytes.add((byte) getInputStream().read());
             } catch (IOException e) {
                 throw new PrematureStreamException();
             }

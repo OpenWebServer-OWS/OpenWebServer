@@ -2,6 +2,7 @@ package com.openwebserver.core.handlers;
 
 import FileManager.Folder;
 import FileManager.Local;
+import com.openwebserver.core.connection.client.utils.SocketContent;
 import com.openwebserver.core.security.sessions.annotations.Session;
 import com.openwebserver.core.http.content.Code;
 import com.openwebserver.core.http.Header;
@@ -124,6 +125,7 @@ public class RequestHandler extends Route implements RouteRegister{
     public void setCORSPolicy(String policy) {
         setCORSPolicy(policy, false);
     }
+
     public void setCORSPolicy(String policy, boolean overrideOrigin) {
         if(policy == null){
             return;
@@ -132,11 +134,11 @@ public class RequestHandler extends Route implements RouteRegister{
             this.policy = PolicyManager.getPolicy(policy);
             this.headers.addAll(this.policy.pack());
             CORS_handler = new RequestHandler(new Route(this.getPath(), Method.OPTIONS), request -> {
-                Headers headers = this.policy.pack();
-                if(overrideOrigin){
-                    request.headers.tryGet("Origin", header -> headers.replace("Access-Control-Allow-Origin", header.getValue()));
-                }
-                return Response.simple(Code.No_Content).addHeaders(headers);
+                    Headers headers = getPolicy().pack();
+                    if(overrideOrigin){
+                        request.headers.tryGet("Origin", header -> headers.replace("Access-Control-Allow-Origin", header.getValue()));
+                    }
+                    return Response.simple(Code.No_Content).addHeaders(headers);
             });
             this.overrideOrigin = overrideOrigin;
         } catch (PolicyManager.PolicyException.NotFound notFound) {

@@ -1,9 +1,9 @@
 package com.openwebserver.core.objects;
 
 import FileManager.Local;
+import com.openwebserver.core.WebException;
 import com.openwebserver.core.http.Header;
 import com.openwebserver.core.http.Headers;
-import com.openwebserver.core.WebException;
 import com.openwebserver.core.http.content.Code;
 import com.openwebserver.core.http.content.Content;
 import com.together.Pair;
@@ -22,7 +22,7 @@ public class Response implements Content {
 
     private final Headers headers = new Headers();
     private final Type type;
-    private final byte[] raw;
+    private byte[] raw;
     private final Code code;
 
     public Response(Code code, Object content, Content.Type type) {

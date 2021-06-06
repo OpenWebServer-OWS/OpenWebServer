@@ -1,8 +1,10 @@
 package com.openwebserver.core.connection.client;
 
 import com.openwebserver.core.connection.ConnectionManager;
-import com.openwebserver.core.connection.client.utils.Handover;
+
+
 import com.openwebserver.core.connection.client.utils.SocketWrapper;
+import com.openwebserver.core.objects.Response;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -27,8 +29,14 @@ public class Connection extends SocketWrapper {
             super.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            ConnectionManager.close(this);
         }
-        ConnectionManager.close(this);
+
+    }
+
+    public boolean isConnected(){
+        return getSocket().isConnected();
     }
 
     @Override
@@ -41,8 +49,12 @@ public class Connection extends SocketWrapper {
         handler.start();
     }
 
-    public Handover HandOff(BiConsumer<Connection, Object[]> writer, Object... args){
+    public HandOver HandOff(BiConsumer<Connection, Object[]> writer, Object... args){
         handle(writer, args);
-        return () -> new byte[0];
+        return new HandOver();
     }
+
+    public static class HandOver extends Response {
+    }
+
 }
