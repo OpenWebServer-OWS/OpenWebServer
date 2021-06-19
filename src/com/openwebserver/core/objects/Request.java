@@ -155,7 +155,7 @@ public class Request{
             switch (contentType.getValue()) {
                 case "multipart/form-data" -> MultipartDecoder(connection.readFor(contentLength));
                 case "application/x-www-form-urlencoded" -> POST.putAll(URLEncoded(connection.readFor(contentLength).toString()));
-                case "application/json" -> POST = (HashMap<String, Object>) new JSONObject(connection.readFor(contentLength).toString()).toMap();
+                case "application/json" -> POST = (HashMap<String, Object>) new JSONObject(connection.readFor(contentLength).toString(Charset.defaultCharset())).toMap();
                 default -> {
                     HashMap<String, Object> post = new HashMap<>();
                     post.put("$plain", connection.readFor(contentLength).toString(Charset.defaultCharset()));
