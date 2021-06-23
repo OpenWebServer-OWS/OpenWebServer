@@ -3,7 +3,8 @@ package com.openwebserver.core.http;
 import com.openwebserver.core.connection.client.Connection;
 import com.openwebserver.core.connection.client.utils.SocketContent;
 import com.openwebserver.core.connection.client.utils.SocketReader;
-import nl.bytes.Bytes;
+import nl.lownative.bytes.Bytes;
+
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

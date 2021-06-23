@@ -16,7 +16,8 @@ import com.openwebserver.core.security.sessions.Session;
 import com.openwebserver.core.WebException;
 import com.openwebserver.core.WebServer;
 import com.together.Pair;
-import nl.bytes.Bytes;
+
+import nl.lownative.bytes.Bytes;
 import org.json.JSONObject;
 
 import java.io.IOException;

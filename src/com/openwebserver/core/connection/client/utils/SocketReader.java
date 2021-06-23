@@ -1,6 +1,8 @@
 package com.openwebserver.core.connection.client.utils;
 
-import nl.bytes.Bytes;
+
+
+import nl.lownative.bytes.Bytes;
 
 import java.io.IOException;
 import java.io.InputStream;

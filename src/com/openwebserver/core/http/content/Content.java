@@ -8,7 +8,8 @@ import com.openwebserver.core.http.Headers;
 
 import com.openwebserver.core.objects.Response;
 import com.openwebserver.core.WebServer;
-import nl.bytes.Bytes;
+import nl.lownative.bytes.Bytes;
+
 
 import java.util.Arrays;
 
