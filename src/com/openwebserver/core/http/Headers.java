@@ -1,10 +1,9 @@
 package com.openwebserver.core.http;
 
+import com.lownative.binary.bytes.Bytes;
 import com.openwebserver.core.connection.client.Connection;
 import com.openwebserver.core.connection.client.utils.SocketContent;
 import com.openwebserver.core.connection.client.utils.SocketReader;
-import nl.lownative.bytes.Bytes;
-
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +22,7 @@ public class Headers extends ArrayList<Header> implements SocketContent {
     }
 
     public static Headers Incoming(Connection connection) throws SocketReader.ConnectionReaderException {
-        Headers headers = Headers.Decode(connection.readUntil(end.getBytes(StandardCharsets.UTF_8)));
+        Headers headers = Headers.Decode(connection.readUntil(end.getBytes(StandardCharsets.UTF_8)).toString(Charset.defaultCharset()));
         if(headers.isEmpty()){
             throw new SocketReader.PrematureStreamException("No headers in request");
         }

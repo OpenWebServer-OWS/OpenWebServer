@@ -2,6 +2,7 @@ package com.openwebserver.core.objects;
 
 import FileManager.Local;
 
+import com.lownative.binary.bytes.Bytes;
 import com.openwebserver.core.connection.client.Connection;
 import com.openwebserver.core.connection.client.utils.SocketReader;
 
@@ -17,7 +18,6 @@ import com.openwebserver.core.WebException;
 import com.openwebserver.core.WebServer;
 import com.together.Pair;
 
-import nl.lownative.bytes.Bytes;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -219,7 +219,7 @@ public class Request{
             );
             if (isFile(headers)) {
                 try {
-                    request.FILES.put(getName(headers), new Pair<>(getFilename(headers), Local.fromBytes(WebServer.tempFolder, UUID.randomUUID() + "_" + getFilename(headers),  bytes.getArray())));
+                    request.FILES.put(getName(headers), new Pair<>(getFilename(headers), Local.fromBytes(WebServer.tempFolder, UUID.randomUUID() + "_" + getFilename(headers),  bytes.nativeData())));
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.err.println("Can't create file from data data to raw format");

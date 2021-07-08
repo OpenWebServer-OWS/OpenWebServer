@@ -1,7 +1,7 @@
 package com.openwebserver.core.connection.security;
 
 import FileManager.Local;
-import nl.lownative.bytes.Bytes;
+import com.lownative.binary.bytes.Bytes;
 
 
 import java.io.IOException;

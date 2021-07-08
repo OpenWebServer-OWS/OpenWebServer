@@ -56,7 +56,9 @@ public class RequestHandler extends Route implements RouteRegister{
         if (!super.hasRequired(request)) {
             throw new WebException(Code.Bad_Request, "method requires arguments").extra("required", getRequired()).addRequest(request);
         }
-        if(acceptedContentType != null){
+        if(acceptedContentType != null && headers.containsKey("Content-Type")){
+            Header header = headers.get("Content-Type");
+            System.out.println(header);
             //TODO Filter Accepted content with requesthandler
         }
         if(needsAuthentication() && !getAuthorizer().authorize(request)){

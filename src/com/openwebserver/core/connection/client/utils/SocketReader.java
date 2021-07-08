@@ -2,7 +2,8 @@ package com.openwebserver.core.connection.client.utils;
 
 
 
-import nl.lownative.bytes.Bytes;
+import com.lownative.binary.bytes.Bytes;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +17,7 @@ public interface SocketReader {
     default Bytes readAll() throws ConnectionReaderException {
         Bytes bytes = new Bytes();
         try {
-            bytes.doWhile(() -> {
+            bytes.doWhile(bytes::add, () -> {
                 try {
                     return (byte) getInputStream().read();
                 } catch (IOException e) {
@@ -36,7 +37,7 @@ public interface SocketReader {
     default Bytes readUntil(byte[] sequence) throws ConnectionReaderException {
         Bytes bytes = new Bytes();
         try {
-            bytes.doWhile(() -> {
+            bytes.doWhile(bytes::add,() -> {
                 try {
                     return (byte) getInputStream().read();
                 } catch (IOException e) {
@@ -50,7 +51,7 @@ public interface SocketReader {
                 throw new ConnectionReaderException(throwable);
             }
         }
-        if(bytes.get(0)  != -1){
+        if(bytes.get(0) != -1){
             return bytes;
         }else{
             throw new ConnectionReaderException("Invalid bytes value read from stream");

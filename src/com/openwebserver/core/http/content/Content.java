@@ -2,13 +2,14 @@ package com.openwebserver.core.http.content;
 
 
 
+import com.lownative.arrays.interfaces.CopyUtils;
 import com.openwebserver.core.connection.client.utils.SocketContent;
 import com.openwebserver.core.http.Header;
 import com.openwebserver.core.http.Headers;
 
 import com.openwebserver.core.objects.Response;
 import com.openwebserver.core.WebServer;
-import nl.lownative.bytes.Bytes;
+
 
 
 import java.util.Arrays;
@@ -30,7 +31,7 @@ public interface Content extends SocketContent {
 
 
     default byte[] get() {
-        return Bytes.concat(getHeaders().get(), raw());
+        return CopyUtils.concat(getHeaders().get(), raw());
     }
 
     default Content addHeader(Header... headers){
