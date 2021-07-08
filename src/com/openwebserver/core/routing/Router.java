@@ -28,7 +28,6 @@ public class Router {
 
     public static void register(Domain domain, RequestHandler handler) {
         getInstance().routes.populate(domain);
-        handler.setDomain(domain);
         Routes routes = null;
         for (Routes routes1 : getInstance().routes.branch(domain)) {
             if (routes1.getPath().equals("#")) {

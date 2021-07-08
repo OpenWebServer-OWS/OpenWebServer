@@ -37,6 +37,7 @@ public class Domain extends ContextProvider {
     }
 
     public Domain addHandler(RequestHandler requestHandler) {
+        requestHandler.setDomain(this);
         requestHandler.register(handler -> Router.register(this, handler));
         return this;
     }
