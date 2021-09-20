@@ -150,7 +150,7 @@ public class Request{
         Header contentType = headers.get("Content-Type");
         switch (contentType.getValue()) {
             case "multipart/form-data": {
-                MultipartDecoder(data);
+//                MultipartDecoder(data);
                 break;
             }
             case "application/x-www-form-urlencoded": {
@@ -186,36 +186,36 @@ public class Request{
         return fields;
     }
 
-    private void MultipartDecoder(byte[] encoded) throws RequestException.DecodingException {
-        try {
-            boolean done = false;
-            String boundary = "--" + headers.get("Content-Type").get("boundary").getValue();
-            Thread t = new ByteReader(encoded).foreachFind(boundary.getBytes(Charset.defaultCharset()), new ByteReader.PatternFunction() {
-                @Override
-                public void OnFinding(byte[] bytes) {
-                    try {
-                        FormData data = FormData.decode(bytes);
-                        if (data.isFile()) {
-                            FILES.put(data.getName(), new Pair<>(data.getFilename(), data.file));
-                        } else {
-                            POST.put(data.getName().replaceAll("\"", "").trim(), data.toString().trim());
-                        }
-                    } catch (ByteReader.ByteReaderException.PrematureStreamException e) {
-                        e.printStackTrace();
-                    }
-                }
-                @Override
-                public void OnException(Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-            t.start();
-            while (t.isAlive()) Thread.onSpinWait();
-        } catch (Throwable t) {
-            throw new RequestException.DecodingException("Can't decode multipart form data");
-        }
-
-    }
+//    private void MultipartDecoder(byte[] encoded) throws RequestException.DecodingException {
+//        try {
+//            boolean done = false;
+//            String boundary = "--" + headers.get("Content-Type").get("boundary").getValue();
+//            Thread t = new ByteReader(encoded).foreachFind(boundary.getBytes(Charset.defaultCharset()), new ByteReader.PatternFunction() {
+//                @Override
+//                public void OnFinding(byte[] bytes) {
+//                    try {
+//                        FormData data = FormData.decode(bytes);
+//                        if (data.isFile()) {
+//                            FILES.put(data.getName(), new Pair<>(data.getFilename(), data.file));
+//                        } else {
+//                            POST.put(data.getName().replaceAll("\"", "").trim(), data.toString().trim());
+//                        }
+//                    } catch (ByteReader.ByteReaderException.PrematureStreamException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                @Override
+//                public void OnException(Throwable t) {
+//                    t.printStackTrace();
+//                }
+//            });
+//            t.start();
+//            while (t.isAlive()) Thread.onSpinWait();
+//        } catch (Throwable t) {
+//            throw new RequestException.DecodingException("Can't decode multipart form data");
+//        }
+//
+//    }
 
     public Route.Method getMethod() {
         return method;

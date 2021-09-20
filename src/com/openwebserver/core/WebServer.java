@@ -20,7 +20,7 @@ public class WebServer{
     public static Header serverHeader;
     public static Folder tempFolder;
 
-    private final TreeArrayList<Integer, com.openwebserver.core.Objects.Domain> domains = new TreeArrayList<>();
+    private final TreeArrayList<Integer, Domain> domains = new TreeArrayList<>();
 
     static {
         try {
@@ -45,7 +45,7 @@ public class WebServer{
         this.closed = closed;
     }
 
-    public WebServer addDomain(com.openwebserver.core.Objects.Domain... domains) {
+    public WebServer addDomain(Domain... domains) {
         try {
             KeyManager.load(domains);
         } catch (KeyManager.KeyManagerException e) {

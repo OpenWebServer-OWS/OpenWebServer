@@ -1,21 +1,16 @@
 package com.openwebserver.services.Objects;
 
 
-import com.openwebserver.core.Content.Code;
 import com.openwebserver.core.Handlers.RequestHandler;
-import com.openwebserver.core.Objects.Response;
 import com.openwebserver.core.Routing.Route;
 import com.openwebserver.core.Security.Authorization.Authorizer;
-import com.openwebserver.core.WebException;
 import com.openwebserver.services.ServiceManager;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static java.util.Arrays.*;
+import static java.util.Arrays.stream;
 
 
 public class Service extends RequestHandler implements Consumer<RequestHandler> {
