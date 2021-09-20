@@ -59,10 +59,18 @@ public class Domain extends ContextProvider {
         return getAlias();
     }
 
-    public Domain setCertificates(Certificate<PrivateKey> privateKeyCertificate, Certificate<X509Certificate> certificate){
+    public Domain setCertificates(Certificate<X509Certificate> certificate, Certificate<PrivateKey> privateKeyCertificate){
         setPrivateKey(privateKeyCertificate);
         setCertificate(certificate);
         return this;
+    }
+
+    public static class DomainException extends Throwable{
+
+        public DomainException(Throwable t){
+            super(t);
+        }
+
     }
 
 }

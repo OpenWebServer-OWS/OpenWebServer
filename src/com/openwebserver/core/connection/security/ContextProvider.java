@@ -13,10 +13,11 @@ public abstract class ContextProvider {
         this.alias = alias;
         this.certificate = certificate;
         this.privateKey = privateKey;
+        ContextManager.register(this);
     }
 
     public ContextProvider(String alias){
-        this.alias = alias;
+        this(alias, null, null);
     }
 
     protected ContextProvider(){}

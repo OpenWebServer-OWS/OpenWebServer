@@ -2,72 +2,81 @@ package com.openwebserver.core.connection.security;
 
 import javax.net.ssl.*;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class ContextManager implements X509KeyManager {
 
     public final static String StoreType = "PKCS12";
-    private static ContextManager context;
+    private static final ContextManager manager;
+    private static HashMap<String, ContextProvider> contextProviders = new HashMap<>();
 
-    static {
-        try {
-            context = new ContextManager();
-        } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException | CertificateException | IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private final KeyStore keyStore;
-    private final String password;
+    private KeyStore store;
     private X509KeyManager defaultKeyManager;
 
-    private ContextManager(KeyStore keyStore, String password) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, CertificateException, IOException {
-        this.keyStore = keyStore;
-        this.password = password;
-        keyStore.load(null);
+    static {
+        manager = new ContextManager();
+    }
+
+
+
+    private ContextManager(){}
+
+    public static void use(KeyStore keyStore, char[] password) throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
         final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyManagerFactory.init(keyStore, password.toCharArray());
-        for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
+        keyManagerFactory.init(keyStore, password);
+        for (javax.net.ssl.KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
             if (keyManager instanceof X509KeyManager) {
-                this.defaultKeyManager = (X509KeyManager) keyManager;
+                manager.defaultKeyManager = (X509KeyManager) keyManager;
                 break;
             }
         }
+        manager.store = keyStore;
     }
 
-    private ContextManager() throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, CertificateException, IOException {
-        this(KeyStore.getInstance(StoreType), UUID.randomUUID().toString());
-    }
-
-    public static void reInit(KeyStore keyStore, String password) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        context = new ContextManager(keyStore, password);
-    }
-
-    public static void register(ContextProvider contextProvider) {
+    public static <T extends ContextProvider> void register(T contextProvider){
         if(contextProvider.isSecure()) {
-            ContextManager context = getInstance();
-            try {
-                context.keyStore.setCertificateEntry(contextProvider.getAlias(), contextProvider.getCertificate().get());
-                context.keyStore.setKeyEntry(contextProvider.getAlias(), contextProvider.getPrivateKey().get(), context.password.toCharArray(), new X509Certificate[]{contextProvider.getCertificate().get()});
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
+            contextProviders.put(contextProvider.getAlias(), contextProvider);
         }
     }
 
-    public static ContextManager getInstance(){
-        return context;
+    public static SSLContext createContext() throws KeyManagerException {
+        try {
+            SSLContext context = SSLContext.getInstance("SSL");
+            context.init(new X509KeyManager[]{manager}, null, null);
+            return context;
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw KeyManagerException.wrap(e);
+        }
     }
 
-    public static SSLContext generate() throws NoSuchAlgorithmException, KeyManagementException {
-        SSLContext context = SSLContext.getInstance("SSL");
-        context.init(new X509KeyManager[]{getInstance()}, null, null);
-        return context;
+    public static ServerSocket createServerSocket(int port) throws KeyManagerException {
+        try {
+            return createContext().getServerSocketFactory().createServerSocket(port);
+        } catch (IOException e) {
+            throw KeyManagerException.wrap(e);
+        }
+    }
+
+    public static void init() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        KeyStore keyStore = KeyStore.getInstance(StoreType);
+        keyStore.load(null);
+        char[] password = UUID.randomUUID().toString().toCharArray();
+        contextProviders.forEach((String alias, ContextProvider provider) ->{
+            try {
+                keyStore.setCertificateEntry(alias, provider.getCertificate().get());
+                keyStore.setKeyEntry(alias, provider.getPrivateKey().get(), password, new X509Certificate[]{provider.getCertificate().get()});
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
+        });
+        use(keyStore, password);
     }
 
     //region X509KeyManager implementations
@@ -104,5 +113,18 @@ public class ContextManager implements X509KeyManager {
     public PrivateKey getPrivateKey(String alias) {
         return defaultKeyManager.getPrivateKey(alias);
     }
+
+    public static class KeyManagerException extends Throwable {
+
+        public KeyManagerException(Throwable t) {
+            super(t);
+        }
+
+        public static KeyManagerException wrap(Throwable t) {
+            return new KeyManagerException(t);
+        }
+
+    }
     //endregion
 }
+

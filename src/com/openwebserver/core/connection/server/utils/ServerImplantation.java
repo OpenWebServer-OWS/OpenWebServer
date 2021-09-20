@@ -3,16 +3,12 @@ package com.openwebserver.core.connection.server.utils;
 import com.openwebserver.core.connection.client.Connection;
 import com.openwebserver.core.connection.security.ContextManager;
 import com.openwebserver.core.connection.server.SocketManager;
-import com.openwebserver.core.routing.Router;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.function.Consumer;
 
 public abstract class ServerImplantation extends Thread{
 
@@ -29,9 +25,9 @@ public abstract class ServerImplantation extends Thread{
         this.secure = secure;
     }
 
-    public void setup() throws NoSuchAlgorithmException, KeyManagementException, IOException {
+    public void setup() throws NoSuchAlgorithmException, KeyManagementException, IOException, ContextManager.KeyManagerException {
         if(secure){
-            this.serverSocket = ContextManager.generate().getServerSocketFactory().createServerSocket(port);
+            this.serverSocket = ContextManager.createServerSocket(port);
         }else{
             this.serverSocket = new ServerSocket(port);
         }
@@ -73,7 +69,7 @@ public abstract class ServerImplantation extends Thread{
                 onConnection(new Connection(s));
 
             }while (!closed);
-        } catch (NoSuchAlgorithmException | KeyManagementException | IOException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | IOException | ContextManager.KeyManagerException e) {
             e.printStackTrace();
         }
     }
