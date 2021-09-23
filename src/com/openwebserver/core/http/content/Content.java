@@ -2,7 +2,8 @@ package com.openwebserver.core.http.content;
 
 
 
-import com.lownative.arrays.interfaces.CopyUtils;
+
+import com.lownative.utils.CopyUtils;
 import com.openwebserver.core.connection.client.utils.SocketContent;
 import com.openwebserver.core.http.Header;
 import com.openwebserver.core.http.Headers;

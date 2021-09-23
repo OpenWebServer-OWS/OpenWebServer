@@ -1,6 +1,7 @@
 package com.openwebserver.core.http;
 
-import com.lownative.binary.bytes.Bytes;
+
+import com.lownative.typed.Bytes;
 import com.openwebserver.core.connection.client.Connection;
 import com.openwebserver.core.connection.client.utils.SocketContent;
 import com.openwebserver.core.connection.client.utils.SocketReader;
@@ -45,6 +46,11 @@ public class Headers extends ArrayList<Header> implements SocketContent {
             }
         }
         return null;
+    }
+
+    public Headers inline(Consumer<Headers> headersConsumer){
+        headersConsumer.accept(this);
+        return this;
     }
 
     public int IndexOf(Header header){

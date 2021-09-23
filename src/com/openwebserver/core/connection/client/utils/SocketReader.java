@@ -2,8 +2,11 @@ package com.openwebserver.core.connection.client.utils;
 
 
 
-import com.lownative.binary.bytes.Bytes;
 
+
+
+import com.lownative.typed.Bytes;
+import com.lownative.utils.ConditionalUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +20,7 @@ public interface SocketReader {
     default Bytes readAll() throws ConnectionReaderException {
         Bytes bytes = new Bytes();
         try {
-            bytes.doWhile(bytes::add, () -> {
+            ConditionalUtils.doWhile(bytes::add, () -> {
                 try {
                     return (byte) getInputStream().read();
                 } catch (IOException e) {
@@ -37,7 +40,7 @@ public interface SocketReader {
     default Bytes readUntil(byte[] sequence) throws ConnectionReaderException {
         Bytes bytes = new Bytes();
         try {
-            bytes.doWhile(bytes::add,() -> {
+            ConditionalUtils.doWhile(bytes::add,() -> {
                 try {
                     return (byte) getInputStream().read();
                 } catch (IOException e) {

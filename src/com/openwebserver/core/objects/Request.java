@@ -2,7 +2,7 @@ package com.openwebserver.core.objects;
 
 import FileManager.Local;
 
-import com.lownative.binary.bytes.Bytes;
+import com.lownative.typed.Bytes;
 import com.openwebserver.core.connection.client.Connection;
 import com.openwebserver.core.connection.client.utils.SocketReader;
 
@@ -155,7 +155,7 @@ public class Request{
             int contentLength = Integer.parseInt(headers.get("Content-Length").getValue());
             switch (contentType.getValue()) {
                 case "multipart/form-data" -> MultipartDecoder(connection.readFor(contentLength));
-                case "application/x-www-form-urlencoded" -> POST.putAll(URLEncoded(connection.readFor(contentLength).toString()));
+                case "application/x-www-form-urlencoded" -> POST.putAll(URLEncoded(connection.readFor(contentLength).toString(Charset.defaultCharset())));
                 case "application/json" -> POST = (HashMap<String, Object>) new JSONObject(connection.readFor(contentLength).toString(Charset.defaultCharset())).toMap();
                 default -> {
                     HashMap<String, Object> post = new HashMap<>();
@@ -210,7 +210,7 @@ public class Request{
 
         public static void decode(Bytes bytes, Request request){
             AtomicInteger headerLength = new AtomicInteger();
-            Headers headers = Headers.Decode(bytes.until(Headers.end.getBytes(Charset.defaultCharset())).inline(bytes1 -> headerLength.set(bytes1.length())));
+            Headers headers = Headers.Decode(bytes.until(Headers.end.getBytes(Charset.defaultCharset())).use(bytes1 -> headerLength.set(bytes1.length())));
             bytes = bytes.range(headerLength.get() + Headers.end.length(),
                     bytes.length()
                             - (request.headers.get("Content-Type").get("boundary").getValue().length() + "--".length())
@@ -219,7 +219,7 @@ public class Request{
             );
             if (isFile(headers)) {
                 try {
-                    request.FILES.put(getName(headers), new Pair<>(getFilename(headers), Local.fromBytes(WebServer.tempFolder, UUID.randomUUID() + "_" + getFilename(headers),  bytes.nativeData())));
+                    request.FILES.put(getName(headers), new Pair<>(getFilename(headers), Local.fromBytes(WebServer.tempFolder, UUID.randomUUID() + "_" + getFilename(headers), bytes.array())));
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.err.println("Can't create file from data data to raw format");
