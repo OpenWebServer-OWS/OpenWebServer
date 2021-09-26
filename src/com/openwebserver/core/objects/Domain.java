@@ -65,6 +65,10 @@ public class Domain extends ContextProvider {
         return this;
     }
 
+    public Domain setCertificates(String certificatePath, String privateKeyPath){
+        return setCertificates(new Certificate<>(certificatePath), new Certificate<>(privateKeyPath));
+    }
+
     public static class DomainException extends Throwable{
 
         public DomainException(Throwable t){
