@@ -9,8 +9,9 @@ import com.openwebserver.services.ServiceManager;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-import static java.util.Arrays.*;
+import static java.util.Arrays.stream;
 
 
 public class Service extends RequestHandler implements Consumer<RequestHandler> {
@@ -26,9 +27,16 @@ public class Service extends RequestHandler implements Consumer<RequestHandler> 
         super(new Route(path, Route.Method.UNDEFINED),null);
         this.name = Objects.requireNonNullElseGet(name, () -> getClass().getSimpleName());
         //region create route annotations
-        stream(this.getClass().getDeclaredMethods()).forEach(method -> RequestHandler.wrap(method, this));
+        stream(this.getClass().getDeclaredMethods()).filter(method -> method.isAnnotationPresent(com.openwebserver.services.annotations.Route.class)).forEach(method -> RequestHandler.wrap(method, this));
         //endregion
         ServiceManager.register(this);
+    }
+
+    public <T extends Service> Service allowPrivateAccess(Supplier<T> privateSupplier){
+        if(privateSupplier != null){
+            stream(privateSupplier.get().getClass().getDeclaredMethods()).filter(method -> method.isAnnotationPresent(com.openwebserver.services.annotations.Route.class)).forEach(method -> RequestHandler.wrap(method, this));
+        }
+        return this;
     }
 
     public String getName() {

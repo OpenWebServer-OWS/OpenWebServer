@@ -234,6 +234,7 @@ public class RequestHandler extends Route implements RouteRegister{
     public static void wrap(java.lang.reflect.Method method, Service service){
         if(method.isAnnotationPresent(com.openwebserver.services.annotations.Route.class)) {
             RequestHandler handler = new RequestHandler(new Route(method.getAnnotation(com.openwebserver.services.annotations.Route.class)), null);
+            method.setAccessible(true);
             if (method.getReturnType().equals(Response.class)) {
                 handler.setContentHandler(request -> {
                     try {
