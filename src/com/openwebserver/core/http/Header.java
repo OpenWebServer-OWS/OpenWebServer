@@ -37,7 +37,7 @@ public class Header extends Pair<String, String> {
         return h;
     }
     public static Header decode(String encoded) {
-        if (!encoded.contains(KeyValueSeparator) || encoded.contains("http")) {
+        if (!encoded.contains(KeyValueSeparator) || encoded.contains("://")) {
             return Header.raw(encoded);
         }
         String[] kvp = encoded.split(":");
