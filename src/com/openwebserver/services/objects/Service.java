@@ -32,9 +32,9 @@ public class Service extends RequestHandler implements Consumer<RequestHandler> 
         ServiceManager.register(this);
     }
 
-    public <T extends Service> Service allowPrivateAccess(Supplier<T> privateSupplier){
+    public <T extends Service> Service allowPrivateAccess(Supplier<Class<T>> privateSupplier){
         if(privateSupplier != null){
-            stream(privateSupplier.get().getClass().getDeclaredMethods()).filter(method -> method.isAnnotationPresent(com.openwebserver.services.annotations.Route.class)).forEach(method -> RequestHandler.wrap(method, this));
+            stream(privateSupplier.get().getDeclaredMethods()).filter(method -> method.isAnnotationPresent(com.openwebserver.services.annotations.Route.class)).forEach(method -> RequestHandler.wrap(method, this));
         }
         return this;
     }
