@@ -215,6 +215,12 @@ public class RequestHandler extends Route implements RouteRegister{
         return new RequestHandler(new Route(path, method), handler);
     }
 
+    public static RequestHandler folder(String path){
+        return RequestHandler.folder(new Folder(path));
+    }
+    public static RequestHandler folder(Folder folder){
+        return folder("", folder);
+    }
     public static RequestHandler folder(String pathPrefix, Folder f){
         return new RequestHandler(new Route(pathPrefix + "/#", Method.GET), request -> {
             String path = request.getPath(true);
@@ -226,9 +232,6 @@ public class RequestHandler extends Route implements RouteRegister{
         });
     }
 
-    public static RequestHandler folder(Folder folder){
-        return folder("", folder);
-    }
 
 
     public static void wrap(java.lang.reflect.Method method, Service service){
