@@ -52,7 +52,6 @@ public class Service extends RequestHandler implements Consumer<RequestHandler> 
         return ServiceManager.getService(serviceClass);
     }
 
-
     @Override
     public void register(Consumer<RequestHandler> routeConsumer) {
         routes.forEach(handler -> handler.register(routeConsumer));

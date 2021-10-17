@@ -90,7 +90,7 @@ public class Router {
     private static Routes find(Request request, Connection connection) throws RoutingException.NotFoundException {
         AtomicReference<Routes> requestHandler = new AtomicReference<>(null);
         router.routes.Search(domain -> domain.getAlias().equals(request.getAlias()) && domain.getPort() == connection.getLocalPort(), handlers -> handlers.forEach(routes -> {
-            if (routes.matches(request)) {
+            if (routes.matches(request) && requestHandler.get() == null) {
                 requestHandler.set(routes);
             }
         }));
