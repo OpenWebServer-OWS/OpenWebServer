@@ -70,7 +70,7 @@ public class Route {
         this.domain = route.domain;
         this.hidden = route.hidden;
         this.RESTParams = route.RESTParams;
-        
+
     }
 
     public void disable() {
