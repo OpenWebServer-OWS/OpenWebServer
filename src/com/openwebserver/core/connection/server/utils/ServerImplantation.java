@@ -7,8 +7,6 @@ import com.openwebserver.core.connection.server.SocketManager;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 
 public abstract class ServerImplantation extends Thread{
 
@@ -25,7 +23,7 @@ public abstract class ServerImplantation extends Thread{
         this.secure = secure;
     }
 
-    public void setup() throws NoSuchAlgorithmException, KeyManagementException, IOException, ContextManager.KeyManagerException {
+    public void setup() throws IOException, ContextManager.KeyManagerException {
         if(secure){
             this.serverSocket = ContextManager.createServerSocket(port);
         }else{
@@ -44,8 +42,6 @@ public abstract class ServerImplantation extends Thread{
     public boolean isSecure() {
         return secure;
     }
-
-    public abstract void onSetup();
 
     public abstract void onConnection(Connection connection);
 
@@ -69,7 +65,7 @@ public abstract class ServerImplantation extends Thread{
                 onConnection(new Connection(s));
 
             }while (!closed);
-        } catch (NoSuchAlgorithmException | KeyManagementException | IOException | ContextManager.KeyManagerException e) {
+        } catch (IOException | ContextManager.KeyManagerException e) {
             e.printStackTrace();
         }
     }

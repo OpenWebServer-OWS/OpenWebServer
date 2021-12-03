@@ -30,12 +30,12 @@ public class Certificate<T>{
         this(new Local(path));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"UnusedReturnValue"})
     public T deserialize(Local key) {
         try {
             this.encoded = key.read();
             this.type = getType();
-            this.key = createKey((Class<T>) type.returnClass);
+            this.key = createKey();
             return this.key;
         } catch (IOException | CertificateException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
@@ -61,7 +61,7 @@ public class Certificate<T>{
     }
 
     @SuppressWarnings("unchecked")
-    public T createKey(Class<T> tClass) throws NoSuchAlgorithmException, InvalidKeySpecException, CertificateException, IOException {
+    public T createKey() throws NoSuchAlgorithmException, InvalidKeySpecException, CertificateException {
         switch (type) {
             case PRIVATE -> {
                 String data = new String(encoded);
@@ -90,6 +90,10 @@ public class Certificate<T>{
             this.begin = begin;
             this.end = end;
             this.algorithm = algorithm;
+        }
+
+        public Class<?> getReturnClass() {
+            return returnClass;
         }
     }
 }

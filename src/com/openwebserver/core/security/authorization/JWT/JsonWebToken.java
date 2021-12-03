@@ -98,9 +98,9 @@ public class JsonWebToken implements Authorizer<JsonWebToken> {
     }
 
     public static Authorizer<JsonWebToken> validate(BiFunction<Request, JsonWebToken, Boolean> validator){
-        JsonWebToken authorizor = new JsonWebToken();
-        authorizor.setValidator(validator);
-        return authorizor;
+        JsonWebToken authorizer = new JsonWebToken();
+        authorizer.setValidator(validator);
+        return authorizer;
     }
 
     public static class JsonWebTokenException extends AuthorizerException {

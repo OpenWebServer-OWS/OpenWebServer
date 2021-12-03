@@ -3,18 +3,19 @@ package com.openwebserver.core.routing;
 
 import com.openwebserver.core.objects.Domain;
 import com.openwebserver.core.objects.Request;
+import org.json.JSONPropertyIgnore;
 
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 public class Route {
+
+
+
 
     public enum Method {
         GET,
@@ -33,38 +34,50 @@ public class Route {
         }
     }
 
-    private final String[] require;
+    private String[] require;
     private String path;
     private final Route.Method method;
-    private final HashMap<Integer, String> RESTParams = new HashMap<>();
+    private HashMap<Integer, String> RESTParams;
     private Domain domain;
     private boolean needsAuthorization = false;
     private boolean enabled = true;
+    private boolean hidden = false;
 
-    public Route(String path, Method method, String ... require){
-        this.path = path;
+    public Route(String path, Method method, String... require) {
         this.method = method;
-        this.require = require;
-        if(path != null) {
+        if (require != null && require.length > 0) {
+            this.require = require;
+        }
+        if (path != null) {
             if (!path.startsWith("/") && !path.equals("#")) path = "/" + path;
-            RESTDecoder.PatternReader(path, RESTParams::put);
+            this.path = path;
+            if (RESTDecoder.containsRegex(path)) {
+                this.RESTParams = new HashMap<>();
+                RESTDecoder.PatternReader(path, RESTParams::put);
+            }
         }
     }
 
-    public Route(com.openwebserver.services.annotations.Route route){
+    public Route(com.openwebserver.services.annotations.Route route) {
         this(route.path(), route.method(), route.require());
     }
-    
-    public Route(Route route){
+
+    public Route(Route route) {
         this(route.getPath(), route.getMethod(), route.getRequired());
+        this.require = route.require;
+        this.needsAuthorization = route.needsAuthorization;
+        this.enabled = route.enabled;
         this.domain = route.domain;
+        this.hidden = route.hidden;
+        this.RESTParams = route.RESTParams;
+        
     }
 
-    public void disable(){
+    public void disable() {
         enabled = false;
     }
 
-    public void enable(){
+    public void enable() {
         enabled = true;
     }
 
@@ -85,6 +98,9 @@ public class Route {
     }
 
     public Collection<String> getRESTParams() {
+        if(RESTParams == null){
+            return (Collection<String>) Collections.EMPTY_LIST;
+        }
         return RESTParams.values();
     }
 
@@ -93,10 +109,13 @@ public class Route {
     }
 
     protected boolean hasRequired(Request request) {
+        if(getRequired() == null){
+            return true;
+        }
         return request.GET.keySet().containsAll(Arrays.asList(getRequired())) || request.POST.keySet().containsAll(Arrays.asList(getRequired()));
     }
 
-    public boolean requires(){
+    public boolean requires() {
         return getRequired().length > 0;
     }
 
@@ -104,25 +123,37 @@ public class Route {
         return enabled;
     }
 
+
+    public boolean isHidden() {
+        return this.hidden;
+    }
+
+    protected void setHidden(boolean hidden){
+        this.hidden = hidden;
+    }
+
     public String getPath() {
         return path;
     }
 
-    public void addPrefix(Route notation){
+    public void addPrefix(Route notation) {
         addPrefix(notation.getPath());
     }
 
     public void addPrefix(String prefix) {
-        String finalPrefix = prefix.contains("//")?prefix.replaceAll("//", ""): prefix;
-        if(!this.path.contains(prefix)) this.path = finalPrefix + getPath();
-        if(path.contains("//")) path = path.replaceAll("//", "/");
-        if(isREST()){
+        String finalPrefix = prefix.contains("//") ? prefix.replaceAll("//", "") : prefix;
+        if (!this.path.contains(prefix)) this.path = finalPrefix + getPath();
+        if (path.contains("//")) path = path.replaceAll("//", "/");
+        if (isREST()) {
             RESTParams.clear();
             RESTDecoder.PatternReader(path, RESTParams::put);
         }
     }
 
     public boolean isREST() {
+        if(RESTParams == null){
+            return false;
+        }
         return !RESTParams.isEmpty();
     }
 
@@ -134,9 +165,9 @@ public class Route {
         return domain;
     }
 
-    public void print(){
+    public void print() {
         try {
-            System.out.println("\tROUTE:"+ getDomain().getUrl().toString()+getPath());
+            System.out.println("\tROUTE:" + getDomain().getUrl().toString() + getPath());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -146,7 +177,7 @@ public class Route {
 
         public final static Pattern pattern = Pattern.compile("\\{(.*?)}", Pattern.MULTILINE);
 
-        public static boolean containsRegex(String path){
+        public static boolean containsRegex(String path) {
             return path.contains("{") && path.contains("}");
         }
 
@@ -178,7 +209,6 @@ public class Route {
         }
 
     }
-
 
 
 }

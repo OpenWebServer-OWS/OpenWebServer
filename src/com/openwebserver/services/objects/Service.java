@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import static java.util.Arrays.stream;
 
 
+@SuppressWarnings("UnusedReturnValue")
 public class Service extends RequestHandler implements Consumer<RequestHandler> {
 
     private final String name;

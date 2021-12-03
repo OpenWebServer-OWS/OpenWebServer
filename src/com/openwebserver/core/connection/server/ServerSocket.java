@@ -11,11 +11,6 @@ public class ServerSocket extends ServerImplantation {
     }
 
     @Override
-    public void onSetup() {
-
-    }
-
-    @Override
     public void onConnection(Connection connection) {
         Router.handle(connection);
     }

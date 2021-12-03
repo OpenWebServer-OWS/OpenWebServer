@@ -49,7 +49,7 @@ public class Policy{
         return this;
     }
 
-    public Policy AllowAnyOrgin(){
+    public Policy AllowAnyOrigin(){
         allowedOrigin = "*";
         return this;
     }

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static com.openwebserver.core.connection.client.utils.SocketReader.*;
 
@@ -44,44 +45,51 @@ public class Router {
         }
     }
 
+    public static ArrayList<Routes> getRoutes(Domain domain, boolean showHidden) {
+        if (showHidden) {
+            return getInstance().routes.get(domain);
+        }
+        return (ArrayList<Routes>) getInstance().routes.get(domain).stream().filter(route -> !route.isHidden()).collect(Collectors.toList());
+    }
+
     public static ArrayList<Routes> getRoutes(Domain domain) {
-        return getInstance().routes.get(domain);
+        return getRoutes(domain, false);
     }
 
     public static void handle(Connection connection) {
         connection.handle((self, args) -> {
             long start = System.currentTimeMillis();
             try {
-                if(VERBOSE){
-                    System.out.println("New connection: "+ connection);
+                if (VERBOSE) {
+                    System.out.println("New connection: " + connection);
                     System.out.println(start);
                 }
                 Request request = Request.deserialize(self);
-                if(VERBOSE){
-                    System.out.println("Request Decoded: "+ connection);
+                if (VERBOSE) {
+                    System.out.println("Request Decoded: " + connection);
                     System.out.println(System.currentTimeMillis() - start);
                 }
                 self.write(Router.find(request, self).handle(request));
-                if(VERBOSE){
-                    System.out.println("Handled Route Decoded: "+ connection);
+                if (VERBOSE) {
+                    System.out.println("Handled Route Decoded: " + connection);
                     System.out.println(System.currentTimeMillis() - start);
                 }
             } catch (ConnectionReaderException | IOException e) {
                 self.close();
             } catch (WebException e) {
                 self.tryWrite(e.respond());
-                if(VERBOSE){
+                if (VERBOSE) {
                     e.printStackTrace();
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 connection.close();
-                if(VERBOSE){
+                if (VERBOSE) {
                     e.printStackTrace();
                 }
-            } finally{
+            } finally {
                 if (VERBOSE) {
                     System.out.println(connection);
-                    System.out.println("DONE "  + (System.currentTimeMillis() -start));
+                    System.out.println("DONE " + (System.currentTimeMillis() - start));
                 }
             }
         });
@@ -106,7 +114,7 @@ public class Router {
                 return domain;
             }
         }
-        throw new Router.RoutingException("Unknown Domain '"+host+"'");
+        throw new Router.RoutingException("Unknown Domain '" + host + "'");
     }
 
     public static Router getInstance() {

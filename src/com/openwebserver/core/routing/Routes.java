@@ -15,6 +15,7 @@ import java.util.HashMap;
 public class Routes extends HashMap<Route.Method, RequestHandler>{
 
     private final Route route;
+    private boolean hidden;
 
     public Routes(String path, Domain domain){
         route = new Route(path, null);
@@ -23,12 +24,15 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
 
     public void print() {
         route.print();
+        if(hidden) {
+            System.out.println("\r\r\t[HIDDEN]");
+        }
         values().forEach(Routes::Print);
     }
 
     public static void Print(RequestHandler handler){
         System.out.println("\t\t[" + handler.getMethod().toString() + "]");
-        if(handler.getRequired().length > 0) {
+        if(handler.getRequired() != null && handler.getRequired().length > 0) {
             System.out.println("\t\t\tREQUIRED:" + Arrays.toString(handler.getRequired()));
         }
         if(handler.getPolicyName() != null) {
@@ -70,6 +74,9 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     public Routes add(RequestHandler handler){
         handler.setDomain(route.getDomain());
         put(handler.getMethod(), handler);
+        if(handler.isHidden()){
+            this.hidden = true;
+        }
         return this;
     }
 
@@ -99,5 +106,9 @@ public class Routes extends HashMap<Route.Method, RequestHandler>{
     @Override
     public String toString() {
         return String.valueOf(getPath());
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 }

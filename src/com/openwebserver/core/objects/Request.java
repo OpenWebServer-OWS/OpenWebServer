@@ -53,6 +53,10 @@ public class Request{
         this.domain = Router.getDomain(getAlias());
     }
 
+    public Domain getDomain() {
+        return domain;
+    }
+
     public String getAlias() {
         return headers.get("Host").getValue().split(":")[0];
     }

@@ -18,7 +18,7 @@ public class WebServer{
 
     public static Header serverHeader;
     public static Folder tempFolder;
-    public static String rootFilename = "index.html";
+    public static final String rootFilename = "index.html";
     private final ArrayList<Domain> domains = new ArrayList<>();
 
     static {

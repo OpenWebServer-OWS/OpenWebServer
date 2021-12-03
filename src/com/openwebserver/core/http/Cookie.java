@@ -22,6 +22,7 @@ public class Cookie extends Header {
         return add("Domain", domain);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public Cookie setPath(String path){
         return add("Path", path);
     }

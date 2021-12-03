@@ -6,9 +6,10 @@ import com.together.Pair;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@SuppressWarnings("UnusedReturnValue")
 public class Header extends Pair<String, String> {
 
-    public static String separator = "\r\n";
+    public static final String separator = "\r\n";
     public final static String KeyValueSeparator = ":";
 
     private final ArrayList<Attribute<String>> attributes;

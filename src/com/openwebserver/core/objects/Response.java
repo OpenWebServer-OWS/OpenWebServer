@@ -18,11 +18,11 @@ import java.util.Map;
 
 public class Response implements Content {
 
-    public static String version = "1.1";
+    public static final String version = "1.1";
 
     private final Headers headers = new Headers();
     private final Type type;
-    private byte[] raw;
+    private final byte[] raw;
     private final Code code;
 
     public Response(Code code, Object content, Content.Type type) {

@@ -15,7 +15,7 @@ public class ContextManager implements X509KeyManager {
 
     public final static String StoreType = "PKCS12";
     private static final ContextManager manager;
-    private static HashMap<String, ContextProvider> contextProviders = new HashMap<>();
+    private static final HashMap<String, ContextProvider> contextProviders = new HashMap<>();
 
     private KeyStore store;
     private X509KeyManager defaultKeyManager;

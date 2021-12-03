@@ -15,13 +15,13 @@ import java.util.HashMap;
 
 public class ConnectionManager{
 
-    public enum Access{
-        WRITER(SocketWriter.class),
+    public enum Access {
+        CONNECTION(Connection.class),
+        INPUT_STREAM(InputStream.class),
+        OUTPUT_STREAM(OutputStream.class),
         READER(SocketReader.class),
-        OUTPUTSTREAM(OutputStream.class),
-        INPUTSTREAM(InputStream.class),
         SOCKET(Socket.class),
-        CONNECTION(Connection.class);
+        WRITER(SocketWriter.class);
 
         private final Class<?> returnType;
 
@@ -35,7 +35,7 @@ public class ConnectionManager{
 
         public static Access Match(Class<?> requested) throws ConnectionManagerException {
             for (Access constant : Access.class.getEnumConstants()) {
-                if(constant.getReturnType().equals(requested)){
+                if (constant.getReturnType().equals(requested)) {
                     return constant;
                 }
             }
@@ -70,20 +70,19 @@ public class ConnectionManager{
             case SOCKET -> {
                 return (T) c.getSocket();
             }
-            case INPUTSTREAM -> {
+            case INPUT_STREAM -> {
                 return (T) c.getSocket().getInputStream();
             }
-            case OUTPUTSTREAM -> {
+            case OUTPUT_STREAM -> {
                 return (T) c.getSocket().getOutputStream();
             }
         }
         return null;
     }
 
-    public static Connection register(Connection c) {
+    public static void register(Connection c) {
         getInstance().connectionMap.put(c.toString(), c);
         getInstance().counter++;
-        return c;
     }
 
     public static void close(Connection connection) {

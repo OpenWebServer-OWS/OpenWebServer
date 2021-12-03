@@ -2,24 +2,25 @@ package com.openwebserver.core.handlers;
 
 import FileManager.Folder;
 import FileManager.Local;
-import com.openwebserver.core.connection.client.utils.SocketContent;
-import com.openwebserver.core.security.sessions.annotations.Session;
-import com.openwebserver.core.http.content.Code;
+import com.openwebserver.api.Hidden;
+import com.openwebserver.core.WebException;
+import com.openwebserver.core.WebServer;
 import com.openwebserver.core.http.Header;
 import com.openwebserver.core.http.Headers;
+import com.openwebserver.core.http.content.Code;
 import com.openwebserver.core.objects.Request;
 import com.openwebserver.core.objects.Response;
 import com.openwebserver.core.routing.Route;
-import com.openwebserver.core.security.authorization.Authorize;
-import com.openwebserver.core.security.authorization.Authorizer;
 import com.openwebserver.core.security.CORS.CORS;
 import com.openwebserver.core.security.CORS.Policy;
 import com.openwebserver.core.security.CORS.PolicyManager;
+import com.openwebserver.core.security.authorization.Authorize;
+import com.openwebserver.core.security.authorization.Authorizer;
 import com.openwebserver.core.security.content.Accept;
 import com.openwebserver.core.security.sessions.SessionManager;
-import com.openwebserver.core.WebException;
-import com.openwebserver.core.WebServer;
+import com.openwebserver.core.security.sessions.annotations.Session;
 import com.openwebserver.services.objects.Service;
+import org.json.JSONPropertyIgnore;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
@@ -99,6 +100,7 @@ public class RequestHandler extends Route implements RouteRegister{
         this.sessionSpecification = sessionSpecification;
     }
 
+    @JSONPropertyIgnore
     public  SessionHandler getSessionHandler() {
         return sessionHandler;
     }
@@ -182,9 +184,11 @@ public class RequestHandler extends Route implements RouteRegister{
         setCORSPolicy(method.isAnnotationPresent(CORS.class)? method.getAnnotation(CORS.class): null);
         setNeedsAuthentication(method.isAnnotationPresent(Authorize.class));
         setAcceptContent(method.isAnnotationPresent(Accept.class)? method.getAnnotation(Accept.class): null);
+        setHidden(method.isAnnotationPresent(Hidden.class));
         this.reflection = method;
     }
 
+    @JSONPropertyIgnore
     public java.lang.reflect.Method getReflection() {
         return reflection;
     }

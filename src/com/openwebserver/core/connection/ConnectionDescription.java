@@ -24,11 +24,11 @@ public class ConnectionDescription {
     private final InetAddress inetAddress;
     private final int localPort;
     private final SocketAddress localSocketAddress;
-    private int receiveBufSize;
-    private boolean reuseAddresses;
-    private int timeOut;
-    private boolean bound;
-    private boolean closed;
+    private final int receiveBufSize;
+    private final boolean reuseAddresses;
+    private final int timeOut;
+    private final boolean bound;
+    private final boolean closed;
 
     public ConnectionDescription(ServerSocket serverSocket) throws IOException {
         if(serverSocket instanceof SSLServerSocket sslServerSocket){

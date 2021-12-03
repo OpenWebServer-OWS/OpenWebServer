@@ -1,10 +1,5 @@
 package com.openwebserver.core.connection.client.utils;
 
-
-
-
-
-
 import com.lownative.typed.Bytes;
 import com.lownative.utils.ConditionalUtils;
 

@@ -101,7 +101,7 @@ public enum Code {
     Use_Proxy(305, "Use Proxy"),
     /**
      * Server sent this response to directing client to get requested resource to another URI with same method that used prior request.
-     * This has the same semantic than the 302 Found HTTP response code, with the exception that the user agent must not change the HTTP method used: if a POST was used in the first request, a POST must be used in the second request.
+     * This has the same semantic as the 302 Found HTTP response code, with the exception that the user agent must not change the HTTP method used: if a POST was used in the first request, a POST must be used in the second request.
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/307">https://developer.mozilla.org</a>
      */
     Temporary_Redirect(307, "Temporary Redirect"),
@@ -142,7 +142,7 @@ public enum Code {
      * The server can not find requested resource. In the browser, this means the URL is not recognized.
      * In an API, this can also mean that the endpoint is valid but the resource itself does not exist.
      * Servers may also send this response instead of 403 to hide the existence of a resource from an unauthorized client.
-     * This response code is probably the most famous one due to its frequent occurence on the web.
+     * This response code is probably the most famous one due to its frequent occurrence on the web.
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404">https://developer.mozilla.org</a>
      */
     Not_Found(404, "Not Found"),
@@ -177,7 +177,7 @@ public enum Code {
      */
     Conflict(409, "Conflict"),
     /**
-     * This response would be sent when the requested content has been permenantly deleted from server, with no forwarding address.
+     * This response would be sent when the requested content has been permanently deleted from server, with no forwarding address.
      * Clients are expected to remove their caches and links to the resource.
      * The HTTP specification intends this status code to be used for "limited-time, promotional services".
      * APIs should not feel compelled to indicate resources that have been deleted with this status code.
@@ -196,7 +196,7 @@ public enum Code {
     Precondition_Failed(412, "Precondition Failed"),
     /**
      * Request entity is larger than limits defined by server;
-     * the server might close the connection or return an Retry-After header field.
+     * the server might close the connection or return a Retry-After header field.
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/413>https://developer.mozilla.org</a>
      */
     Payload_Too_Large(413, "Payload Too Large"),
@@ -303,7 +303,7 @@ public enum Code {
      * The server is not ready to handle the request.
      * Common causes are a server that is down for maintenance or that is overloaded.
      * @Note that together with this response, a user-friendly page explaining the problem should be sent.
-     * This responses should be used for temporary conditions and the Retry-After: HTTP header should, if possible, contain the estimated time before the recovery of the service.
+     * These responses should be used for temporary conditions and the Retry-After: HTTP header should, if possible, contain the estimated time before the recovery of the service.
      * The webmaster must also take care about the caching-related headers that are sent along with this response, as these temporary condition responses should usually not be cached.
      * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503>https://developer.mozilla.org</a>
      */
