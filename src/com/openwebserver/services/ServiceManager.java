@@ -37,6 +37,14 @@ public class ServiceManager extends HashMap<String, Service>{
         throw new ServiceManagerException.NotFoundException(serviceClass);
     }
 
+    public static Service getServiceByName(String name) throws ServiceManagerException.NotFoundException {
+        Service service = getInstance().get(name);
+        if(service == null){
+            throw new ServiceManagerException.NotFoundException(name);
+        }
+        return service;
+    }
+
     public static ServiceManager getInstance() {
         return manager;
     }
@@ -48,7 +56,11 @@ public class ServiceManager extends HashMap<String, Service>{
 
         public static class NotFoundException extends ServiceManagerException{
             public NotFoundException(Class<?> serviceClass){
-                super("Can't find service with class '"+serviceClass.getSimpleName()+"'");
+                this(serviceClass.getSimpleName());
+            }
+
+            public NotFoundException(String name){
+                super("Can't find service with class '"+name+"'");
             }
         }
     }
