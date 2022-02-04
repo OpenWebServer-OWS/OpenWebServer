@@ -24,5 +24,11 @@ public class API extends Service {
         return Response.simple(routeArray);
     }
 
+    @Hidden
+    @Route(path = "/domains", method = POST)
+    private Response getDomains(Request request){
+        return Response.simple();
+    }
+
 
 }
